@@ -1,4 +1,5 @@
 # IntelliBranch (Python)
+<img src="https://github.com/user-attachments/assets/3413a486-d71c-4285-841d-76bbe74f830a" width="226" height="200" alt="Image" align="right" style="margin-left: 15px; margin: 10px;">
 <p align="center">
   <strong>Directly Creates and Runs Its Own Neural AI in Pure Python</strong><br>
   <em>Stop borrowing third-party AIs. This engine creates its own domain artificial intelligence from scratch in under 2 seconds, routing execution flow in microseconds with Zero External AI Downloads and zero heavy deep learning framework dependencies.</em>
