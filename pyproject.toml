@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intellibranch"
+version = "2.0.0"
+description = "Microsecond Neural Routing and Multi-Intent Filtering Framework in Python"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "numpy>=1.23.0",
+]
+
+[project.scripts]
+ib-train = "intellibranch.cli.train:main"
+ib-demo = "intellibranch.cli.demo:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+pythonpath = ["."]

@@ -1,1454 +1,281 @@
-# IntelliBranch: Embedded Neural AI Manual & Tutorial for Go Developers
+# IntelliBranch: Embedded Neural AI Manual & Tutorial for Python Developers
 
-This guide provides pure Go engineers with a deep-dive technical manual and hands-on tutorial for **IntelliBranch: An Engine That Directly Creates and Runs Its Own Domain Artificial Intelligence**. Stop borrowing external models—learn how to design domain knowledge, generate lightweight neural networks from scratch in seconds, and execute microsecond AI-driven control flow with zero dependencies.
+This guide provides Python developers and system architects with a deep-dive technical manual and hands-on tutorial for **IntelliBranch: An Engine That Directly Creates and Runs Its Own Domain Artificial Intelligence in Python**. Stop borrowing third-party cloud models or heavy deep learning daemons—learn how to structure domain knowledge, generate lightweight neural networks from scratch in seconds, and execute microsecond AI-driven control flow with pure Python and NumPy.
 
 ---
 
 ## Table of Contents
 
-1. [Architectural Mental Model for Go Engineers](#1-architectural-mental-model-for-go-engineers)
-   - [Two Phases: Offline Compilation vs. In-Memory Routing](#11-two-phases-offline-compilation-vs-in-memory-routing)
+1. [Architectural Mental Model](#1-architectural-mental-model)
+   - [Two Phases: Offline Training vs. In-Memory Routing](#11-two-phases-offline-training-vs-in-memory-routing)
 2. [The 4-Step Operational Workflow](#2-the-4-step-operational-workflow)
 3. [Keyword & API Reference Manual](#3-keyword--api-reference-manual)
-   - [Constructor: `NewRouter`](#31-newrouter)
-   - [3-Tier Criteria: `DispatchPolicy` & `SetPolicy`](#32-dispatchpolicy--setpolicy)
-   - [Branch Binding: `Bind`](#33-bind)
-   - [Borderline Safety: `Ambiguous`](#34-ambiguous)
-   - [Multi-Intent: `BindPipeline` & `DefaultPipeline`](#35-bindpipeline--defaultpipeline)
-   - [Safety Isolation: `Fallback`](#36-fallback)
-   - [Inference & Branching: `Dispatch` & `DispatchPipeline`](#37-dispatch--dispatchpipeline)
-   - [Whitebox Observability: `Inspect` & `RouteTrace`](#38-inspect--routetrace)
-   - [Atomic Hot-Swap: `Reload` & `SwapModel`](#39-reload--swapmodel)
-   - [Active Learning: `EnableTelemetry` & `DrainTelemetry`](#310-enabletelemetry--draintelemetry)
-   - [Zero Allocations: `PredictSlots`](#311-predictslots-zero-allocation-inference)
-   - [NeuroGate 3-Head Engine: `NewNeuroGate`](#312-neurogate-3-head-geometric-intelligent-filter-engine)
+   - [Constructor: `Router`](#31-router)
+   - [3-Tier Criteria: `DispatchPolicy` & `set_policy`](#32-dispatchpolicy--set_policy)
+   - [Branch Binding: `bind`](#33-bind)
+   - [Borderline Safety: `ambiguous`](#34-ambiguous)
+   - [Multi-Intent: `bind_pipeline` & `default_pipeline`](#35-bind_pipeline--default_pipeline)
+   - [Safety Isolation: `fallback`](#36-fallback)
+   - [Inference & Branching: `dispatch` & `dispatch_pipeline`](#37-dispatch--dispatch_pipeline)
+   - [Whitebox Observability: `inspect` & `RouteTrace`](#38-inspect--routetrace)
+   - [Atomic Hot-Swap: `reload` & `swap_model`](#39-reload--swap_model)
+   - [Active Learning: `enable_telemetry` & `drain_telemetry`](#310-enable_telemetry--drain_telemetry)
+   - [NeuroGate 3-Head Engine: `NeuroGate`](#311-neurogate-3-head-geometric-intelligent-filter-engine)
 4. [End-to-End Production Tutorial](#4-end-to-end-production-tutorial)
-   - [Step 1: AI Design — Structuring Domain Knowledge (`dataset.csv`)](#step-1-ai-design--structuring-domain-knowledge-datasetcsv)
-   - [Step 2: Building Your Own AI — Training & Model Generation (`ib-train`)](#step-2-building-your-own-ai--training--model-generation-ib-train)
-   - [Step 3: AI-Powered Branching — Microsecond Live Routing (`Dispatch`)](#step-3-ai-powered-branching--microsecond-live-routing-dispatch)
+   - [Step 1: Structuring Domain Knowledge (`dataset.csv`)](#step-1-structuring-domain-knowledge-datasetcsv)
+   - [Step 2: Training & Model Generation (`ib-train`)](#step-2-training--model-generation-ib-train)
+   - [Step 3: Microsecond Live Routing (`dispatch`)](#step-3-microsecond-live-routing-dispatch)
 5. [Advanced Production Recipes](#5-advanced-production-recipes)
-   - [Context Propagation & Timeouts](#51-context-propagation--timeouts)
-   - [Atomic Zero-Downtime Weight Hot-Reloading](#52-atomic-zero-downtime-weight-hot-reloading)
-   - [Whitebox Telemetry & Active Learning Feedback Loop](#53-whitebox-telemetry--active-learning-feedback-loop)
-   - [Semantic LLM Gateway & Cloud Bypass](#54-semantic-llm-gateway--cloud-bypass)
-   - [Hierarchical Cascading Multi-Router](#55-hierarchical-cascading-multi-router)
-   - [Context-Enriched Metadata Synthesis](#56-context-enriched-metadata-synthesis)
-6. [Low-Level Go Runtime Internals (For Systems Architects)](#6-low-level-go-runtime-internals-for-systems-architects)
-   - [6.1. Memory Allocation & Escape Analysis Breakdown (Zero Allocations: 0 B/op)](#61-memory-allocation--escape-analysis-breakdown-zero-allocations-0-bop)
-   - [6.2. Lock-Free Read Path & Concurrency Guarantees](#62-lock-free-read-path--concurrency-guarantees)
-   - [6.3. IBRN Binary Wire Format Specification (Format v2 Positional)](#63-ibrn-binary-wire-format-specification)
-   - [6.4. Hardware Cache Locality: Flat 1D Slices vs Pointer Indirection](#64-hardware-cache-locality-flat-1d-slices-vs-pointer-indirection)
-7. [Go Beginner's Survival Guide & Safe Patterns](#7-go-beginners-survival-guide--safe-patterns)
-   - [7.1. Mental Syntax Mapping: `switch` vs `Router`](#71-mental-syntax-mapping-switch-vs-router)
-   - [7.2. Safe Type Assertions: Preventing Runtime Panics](#72-safe-type-assertions-preventing-runtime-panics)
-   - [7.3. 5-Minute Copy-Paste Quickstart](#73-5-minute-copy-paste-quickstart)
-   - [7.4. Top 4 Beginner Pitfalls & Instant Fixes](#74-top-4-beginner-pitfalls--instant-fixes)
-8. [Real-World Architectural Blueprints & Idea Guide](#8-real-world-architectural-blueprints--idea-guide)
-   - [8.1. Blueprint 1: High-Throughput Kafka Stream QoS Partitioning](#81-blueprint-1-high-throughput-kafka-stream-qos-partitioning)
-   - [8.2. Blueprint 2: Offline Edge & Embedded Appliance Control](#82-blueprint-2-offline-edge--embedded-appliance-control)
-   - [8.3. Blueprint 3: Automated CI/CD Failure Triage & Self-Healing](#83-blueprint-3-automated-cicd-failure-triage--self-healing)
-   - [8.4. Blueprint 4: FinTech Legacy Protocol & Dynamic Packet Dispatch](#84-blueprint-4-fintech-legacy-protocol--dynamic-packet-dispatch)
-9. [6-Domain Multi-Task Demonstration Suite (CLI Guide)](#9-6-domain-multi-task-demonstration-suite-cli-guide)
-10. [Epilogue: An Architectural Manifesto on the Evolution of Control Flow](#10-epilogue-an-architectural-manifesto-on-the-evolution-of-control-flow)
+   - [Thread-Safe Atomic Hot-Reloading](#51-thread-safe-atomic-hot-reloading)
+   - [Telemetry & Active Learning Feedback Loop](#52-telemetry--active-learning-feedback-loop)
+   - [Semantic LLM Gateway & Cloud Bypass](#53-semantic-llm-gateway--cloud-bypass)
+6. [IBRN Binary Wire Format Specification](#6-ibrn-binary-wire-format-specification)
 
 ---
 
-## 1. Architectural Mental Model for Go Engineers
+## 1. Architectural Mental Model
 
-In standard Go, control flow branching over strings relies on discrete equality:
+In standard Python, control flow branching over unstructured strings relies on brittle string checking:
 
-```go
-// Standard Go: Discrete String Equality
-switch input {
-case "refund":
-    return processRefund()
-}
+```python
+# Standard Python: String matching
+if "refund" in query or "cancel" in query:
+    process_refund(query)
 ```
 
-This works if and only if `input` precisely equals `"refund"`. If the caller sends `"refnd"`, `"I need my money back"`, or `"reverse charge"`, the statement falls through.
+This collapses when callers use colloquial phrasing, typos, or context switches:
+- *"Sent the return box a week ago, when do I get my money back?"* (Missed)
+- *"Cancel shipment delay notifications"* (False positive trigger)
 
-**IntelliBranch** replaces discrete byte comparison with **continuous vector coordinate proximity**:
+**IntelliBranch** replaces fragile pattern matching with **continuous latent vector coordinate proximity**:
 
 ```text
 [ Input Text ] ("can u refund order #49281")
      │
      ▼
-[ BPE Tokenizer ] ────── Splits into statistical chunks (e.g. "ref", "und") -> immune to typos
+[ BPE Tokenizer ] ────── Splits into statistical subword tokens -> robust against typos & slang
      │
      ▼
-[ 64-D Latent Coordinates ] ── Similar business intents map to nearby numbers in memory
+[ 64-D Latent Coordinates + Positional Embeddings ] ── Domain intents mapped into compact vector space
      │
      ▼
-[ 128-D GELU Layer ] ── Evaluates context combinations (distinguishes "cancel order" from "cancel alerts")
+[ Non-Linear GELU Mean Pooling ] ── Breaks permutation invariance, capturing word order
      │
      ▼
-[ Softmax Distribution ] ── Converts scores into probabilities (Refund: 0.98, Delivery: 0.01)
+[ 128-D Hidden Layer ] ── Evaluates context combinations
      │
      ▼
-[ Branch Dispatch ] ───── Directly executes bound Go function in ~6.08 microseconds
+[ Softmax Distribution + Shannon Entropy ] ── Converts logits to calibrated probabilities
+     │
+     ▼
+[ 3-Tier Branch Dispatch ] ── Directly executes bound Python function in microseconds
 ```
 
-### 1.1. Two Phases: Offline Compilation vs. In-Memory Routing
+### 1.1. Two Phases: Offline Training vs. In-Memory Routing
 
-IntelliBranch divides work cleanly into two separate phases:
-
-| Dimension | Phase 1: Model Compilation (Offline Training) | Phase 2: Router Dispatch (Live In-Memory Inference) |
+| Dimension | Phase 1: Model Training (Offline) | Phase 2: Router Dispatch (Live In-Memory Inference) |
 | :--- | :--- | :--- |
-| **What happens?** | Reads your `dataset.csv` and builds compact weights in **1.5 seconds** | Loads the `.bin` weights into RAM and routes requests in **6 microseconds** |
-| **Output / Result** | A single portable binary file (`intent.bin`, < 150 KB) | Immediate execution of your Go handler (`router.Bind(...)`) |
-| **Runtime Resource** | Run once during CI/CD build or server bootstrap | Consumes < 150 KB RAM and **0% background CPU** when idle |
+| **What happens?** | Reads your `dataset.csv` and builds compact weights in **under 2 seconds** | Loads the `.bin` weights into RAM and routes requests in **microseconds** |
+| **Output / Result** | A single portable binary file (`intent.bin`, < 150 KB) | Immediate execution of your Python handler (`router.bind(...)`) |
+| **Runtime Resource** | Run once during deployment or server bootstrap | Consumes < 150 KB RAM and **0% background CPU** when idle |
 
 ---
 
 ## 2. The 4-Step Operational Workflow
 
-```text
-┌────────────────────────┐       ┌────────────────────────┐       ┌────────────────────────┐       ┌────────────────────────┐
-│ 1. AI Design           │ ────▶ │ 2. Build Your Own AI   │ ────▶ │ 3. Wire AI Handlers    │ ────▶ │ 4. AI-Powered Branching│
-│    (CSV Knowledge)     │       │    (ib-train CLI)      │       │    (router.Bind)       │       │    (Dispatch / 6μs)    │
-└────────────────────────┘       └────────────────────────┘       └────────────────────────┘       └────────────────────────┘
 ```
-
-1. **AI Design (`sample_dataset.csv`)**: Define target classes and author 30–150 representative real-world phrasing examples per class.
-2. **Build Your Own AI (`ib-train`)**: The compiler engine builds subword merges and crystallizes neural weights into a compact Little-Endian binary (`.bin`) with SHA-256 integrity verification.
-3. **Wire AI Handlers (`main.go`)**: Initialize `Router`, bind target labels to standard Go functions, and register safety fallbacks.
-4. **AI-Powered Branching (`router.Dispatch`)**: Incoming requests are evaluated and dispatched within 6 microseconds with single-digit memory allocations (`sync.Pool`).
+1. Prepare CSV Dataset ──> 2. Compile Model (.bin) ──> 3. Bind Handlers in Python ──> 4. Dispatch Microsecond Traffic
+   [data/intents.csv]        [python -m ...train]        [router.bind("Refund", fn)]       [router.dispatch(None, q, payload)]
+```
 
 ---
 
 ## 3. Keyword & API Reference Manual
 
-### 3.1. `NewRouter`
+### 3.1. `Router`
 
-Initializes an in-memory `Router` from a pre-compiled binary weight file with an atomic model pointer.
+Constructs an in-memory routing core from an existing `intent.bin` model file:
 
-```go
-func NewRouter(weightsPath string, defaultThreshold float64) (*Router, error)
+```python
+from intellibranch import Router
+
+router = Router(model_path="weights/intent.bin", default_threshold=0.60)
 ```
 
-- **Parameters**:
-  - `weightsPath` (`string`): Absolute or relative filesystem path to the compiled `.bin` file.
-  - `defaultThreshold` (`float64`): Primary confidence threshold (recommended: `0.70` – `0.80`).
-- **Guarantees**:
-  - Validates `IBRN` 4-byte magic header and format version (`0x0001` or `0x0002` positional).
-  - Verifies SHA-256 binary integrity checksum against tampering.
-  - Initializes `sync/atomic.Pointer[InferenceModel]` for lock-free hot swapping.
-  - Instantiates default 3-tier `DispatchPolicy` and thread-safe telemetry ring buffer.
+### 3.2. `DispatchPolicy` & `set_policy`
 
----
+Defines production 3-tier routing boundaries:
 
-### 3.2. `DispatchPolicy` & `SetPolicy`
+```python
+from intellibranch import DispatchPolicy
 
-Defines 3-tier confidence boundaries, margin cutoffs, Shannon entropy limits, and multi-intent eligibility.
-
-```go
-type DispatchPolicy struct {
-    HighThreshold     float64 `json:"high_threshold"`     // Min confidence for definite execution (default: 0.75)
-    LowThreshold      float64 `json:"low_threshold"`      // Min confidence below which request goes to Fallback (default: 0.40)
-    MarginCutoff      float64 `json:"margin_cutoff"`      // Min required gap between Top-1 and Top-2 (default: 0.15)
-    MaxEntropy        float64 `json:"max_entropy"`        // Max allowable prediction entropy before OOD isolation (default: 2.0)
-    PipelineThreshold float64 `json:"pipeline_threshold"` // Min secondary confidence for multi-intent pipeline (default: 0.30)
-}
-
-func (r *Router) SetPolicy(policy DispatchPolicy) *Router
-```
-
----
-
-### 3.3. `Bind`
-
-Registers a domain label to a target Go business action handler.
-
-```go
-func (r *Router) Bind(label string, handler RouteAction) *Router
-```
-
-- **Handler Signature**:
-  ```go
-  type RouteAction func(ctx context.Context, payload any) error
-  ```
-
----
-
-### 3.4. `Ambiguous`
-
-Registers the decision handler executed when confidence is borderline or when the gap between Top-1 and Top-2 is narrower than `MarginCutoff`.
-
-```go
-func (r *Router) Ambiguous(handler AmbiguousAction) *Router
-```
-
-- **Handler Signature**:
-  ```go
-  type AmbiguousAction func(ctx context.Context, primary string, secondary string, payload any) error
-  ```
-
----
-
-### 3.5. `BindPipeline` & `DefaultPipeline`
-
-Registers multi-intent composite execution handlers triggered when secondary predictions meet `PipelineThreshold`.
-
-```go
-func (r *Router) BindPipeline(primary string, secondary string, handler PipelineAction) *Router
-func (r *Router) DefaultPipeline(handler PipelineAction) *Router
-```
-
-- **Handler Signature**:
-  ```go
-  type PipelineAction func(ctx context.Context, primary string, secondary string, payload any) error
-  ```
-
----
-
-### 3.6. `Fallback`
-
-Designates the safety handler executed when confidence is below `LowThreshold`, unknown token ratio is excessive ($\ge 0.50$), prediction entropy exceeds `MaxEntropy` (OOD), or no matching label exists.
-
-```go
-func (r *Router) Fallback(handler RouteAction) *Router
-```
-
----
-
-### 3.7. `Dispatch` & `DispatchPipeline`
-
-Performs UTF-8 rune-safe truncation, forward inference, 3-tier boundary evaluation, and executes bound actions.
-
-```go
-func (r *Router) Dispatch(ctx context.Context, text string, payload any) error
-func (r *Router) DispatchPipeline(ctx context.Context, text string, payload any) error
-```
-
-- **Execution Latency**: ~30 microseconds.
-- **Concurrency**: Fully lock-free model read path; concurrent across hundreds of goroutines.
-- **Pre-emptive Interruption**: Context cancellation checked before acquiring lock and before handler invocation.
-
----
-
-### 3.8. `Inspect` & `RouteTrace`
-
-Evaluates input text and returns a full diagnostic trace without triggering business handlers.
-
-```go
-func (r *Router) Inspect(text string) RouteTrace
-```
-
-```go
-type RouteTrace struct {
-    InputText          string             `json:"input_text"`
-    TokenIDs           []uint32           `json:"token_ids"`
-    Subwords           []string           `json:"subwords"`
-    UnknownTokenRatio  float64            `json:"unknown_token_ratio"`
-    ClassProbabilities map[string]float32 `json:"class_probabilities"`
-    PredictedLabel     string             `json:"predicted_label"`
-    SecondaryLabel     string             `json:"secondary_label,omitempty"`
-    Confidence         float64            `json:"confidence"`
-    Margin             float64            `json:"margin"`
-    Entropy            float64            `json:"entropy"`
-    Threshold          float64            `json:"threshold"`
-    IsAmbiguous        bool               `json:"is_ambiguous"`
-    IsPipeline         bool               `json:"is_pipeline"`
-    IsFallback         bool               `json:"is_fallback"`
-    FallbackReason     string             `json:"fallback_reason,omitempty"`
-    LatencyMicros      int64              `json:"latency_micros"`
-}
-```
-
----
-
-### 3.9. `Reload` & `SwapModel`
-
-Atomically replaces the active inference model with zero downtime and zero memory leakage.
-
-```go
-func (r *Router) Reload(modelPath string) error
-func (r *Router) SwapModel(newModel *InferenceModel)
-```
-
----
-
-### 3.10. `EnableTelemetry` & `DrainTelemetry`
-
-Captures ambiguous, OOD, and pipeline queries into an asynchronous ring buffer for active learning retraining.
-
-```go
-func (r *Router) EnableTelemetry(capacity int) *Router
-func (r *Router) DrainTelemetry() []TelemetryEvent
-```
-
----
-
-### 3.11. `PredictSlots` (Zero Allocation Inference)
-
-Direct low-level inference primitive writing Top-1/Top-2 slots directly into caller stack memory with **0 B/op and 0 allocs/op**.
-
-```go
-func (m *InferenceModel) PredictSlots(text string, out *StaticInferenceResult) error
-```
-
----
-
-### 3.12. `NeuroGate`: 3-Head Geometric Intelligent Filter Engine
-
-`NeuroGate` wraps a single shared neural backbone with three orthogonal geometric and symbolic heads, solving model overconfidence, Out-of-Domain (OOD) leakage, and dialectal ambiguity without training separate networks or allocating heap memory.
-
-```go
-type NeuroGate struct { ... }
-
-func NewNeuroGate(modelPath string) (*NeuroGate, error)
-func NewNeuroGateWithModel(model *InferenceModel) *NeuroGate
-```
-
-#### Key API Methods
-
-| Method | Signature | Description |
-| :--- | :--- | :--- |
-| **`Bind`** | `.Bind(label string, handler RouteAction) *GateRouteBuilder` | Registers an action handler and returns a builder for symbolic anchor chaining. |
-| **`WithAnchor`** | `.WithAnchor(weight float32, keywords ...string) *GateRouteBuilder` | Maps keywords to 64-bit bitmasks, injecting an additive logit bias scaled by matched bits in 1 CPU cycle. |
-| **`CalibrateDomainCentroid`** | `.CalibrateDomainCentroid(samples []DataSample) *NeuroGate` | Computes the true L2 manifold centroid of domain sentences for geometric OOD gating. |
-| **`SetDomainBoundary`** | `.SetDomainBoundary(centroid []float32, minCosine float32) *NeuroGate` | Manually configures the reference L2 centroid and minimum cosine similarity threshold. |
-| **`Filter`** | `.Filter(ctx context.Context, text string, payload any) error` | Fast-path routing evaluating all 3 heads with minimal allocations (~5 μs). |
-| **`FilterTokens`** | `.FilterTokens(ctx context.Context, tokens []uint32, payload any) error` | Zero-allocation hot-path execution with strictly **0 B/op and 0 allocs/op (~28 μs)**. |
-| **`FilterPipeline`** | `.FilterPipeline(ctx context.Context, text string, payload any) error` | Evaluates requests supporting multi-intent composite pipelines and ambiguous branches. |
-| **`Inspect`** | `.Inspect(text string) GateTrace` | Returns full whitebox diagnostics including L2 cosine distance, triggered anchors, and entropy. |
-
-#### Complete NeuroGate Production Recipe
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-
-	"intellibranch/pkg/intellibranch"
+policy = DispatchPolicy(
+    high_threshold=0.75,      # Above this: Definite execution
+    low_threshold=0.40,       # Below this: Immediate Fallback isolation
+    margin_cutoff=0.15,       # Minimum required gap between Top-1 and Top-2
+    max_entropy=2.0,          # Shannon entropy limit for Out-of-Domain (OOD) isolation
+    pipeline_threshold=0.30,  # Minimum secondary confidence for multi-intent
 )
+router.set_policy(policy)
+```
 
-func main() {
-	gate, err := intellibranch.NewNeuroGate("weights/demo_iot.bin")
-	if err != nil {
-		log.Fatalf("Failed to init NeuroGate: %v", err)
-	}
+### 3.3. `bind`
 
-	// 1. Calibrate manifold centroid from training samples
-	samples, _ := intellibranch.LoadCSVDataset("data/demo_iot.csv")
-	gate.CalibrateDomainCentroid(samples).SetMinCosineSim(0.35)
+Registers a Python callable for a target class label:
 
-	// 2. Bind route actions with symbolic anchor soft-biases
-	gate.Bind("LightControl", func(ctx context.Context, payload any) error {
-		fmt.Println("[ACTION: LightControl] Switched living room chandelier")
-		return nil
-	}).WithAnchor(1.8, "dark", "light", "lamps", "lamp", "switch")
+```python
+def handle_refund(ctx, payload):
+    print(f"Refunding: {payload}")
 
-	gate.Bind("ClimateControl", func(ctx context.Context, payload any) error {
-		fmt.Println("[ACTION: ClimateControl] Adjusted HVAC temperature setpoint")
-		return nil
-	}).WithAnchor(1.8, "cooling", "heat", "fan", "temp", "ac")
+router.bind("Refund", handle_refund)
+```
 
-	gate.Fallback(func(ctx context.Context, payload any) error {
-		fmt.Println("[ACTION: Fallback] Isolated OOD query or ambiguous command")
-		return nil
-	})
+### 3.4. `ambiguous`
 
-	// 3. Dispatch queries with zero-alloc hot path
-	ctx := context.Background()
-	_ = gate.Filter(ctx, "it is too dark in here please switch on lamps", nil)
-}
+Handles borderline requests where two intents compete closely:
+
+```python
+def handle_ambiguous(ctx, primary, secondary, payload):
+    print(f"Ambiguous between {primary} and {secondary}. Prompt user for clarification.")
+
+router.ambiguous(handle_ambiguous)
+```
+
+### 3.5. `bind_pipeline` & `default_pipeline`
+
+Handles queries containing co-occurring multi-intent instructions:
+
+```python
+def handle_return_reship(ctx, primary, secondary, payload):
+    print(f"Multi-intent pipeline: {primary} -> {secondary}")
+
+router.bind_pipeline("Refund", "Delivery", handle_return_reship)
+```
+
+### 3.6. `fallback`
+
+Default safety handler for low confidence, high entropy, or unhandled labels:
+
+```python
+router.fallback(lambda ctx, payload: print(f"Escalated to human support: {payload}"))
+```
+
+### 3.7. `dispatch` & `dispatch_pipeline`
+
+Executes classification and dispatches to the registered handler:
+
+```python
+router.dispatch(None, "I want my money back", {"user_id": 42})
+router.dispatch_pipeline(None, "refund delivery", {"user_id": 42})
+```
+
+### 3.8. `inspect` & `RouteTrace`
+
+Returns complete whitebox diagnostic telemetry without executing business handlers:
+
+```python
+trace = router.inspect("can you refund my order")
+print(f"Predicted: {trace.predicted_label}, Conf: {trace.confidence:.2f}, Latency: {trace.latency_micros} μs")
+```
+
+### 3.9. `reload` & `swap_model`
+
+Atomically updates model weights without process restarts:
+
+```python
+router.reload("weights/new_model.bin")
+```
+
+### 3.10. `enable_telemetry` & `drain_telemetry`
+
+Bounded ring buffer for collecting edge cases and active learning feedback:
+
+```python
+router.enable_telemetry(capacity=2048)
+events = router.drain_telemetry()
+```
+
+### 3.11. `NeuroGate`: 3-Head Geometric Intelligent Filter Engine
+
+Coordinates:
+- **Head 1**: Geometric L2 Cosine Out-of-Domain Guard
+- **Head 2**: Symbolic Anchor Bitmask & Soft-Bias
+- **Head 3**: Stack Softmax, Margin, and Free Energy Gating
+
+```python
+from intellibranch import NeuroGate
+
+gate = NeuroGate.from_file("weights/demo_cs.bin")
+gate.bind("Refund", handle_refund).with_anchor(1.3, "refund", "money", "card")
+gate.set_min_cosine_sim(0.35)
+
+trace = gate.inspect("refund delivery")
+gate.filter(None, "please refund the money to my card", None)
 ```
 
 ---
 
 ## 4. End-to-End Production Tutorial
 
-### Step 1: AI Design — Structuring Domain Knowledge (`dataset.csv`)
-
-The intelligence of the routing engine directly reflects the quality and variety of your dataset. Below are the mandatory structural specifications and data engineering principles:
-
-#### 1. File Format & Schema Specifications
-
-- **Header**: The first row must strictly be `text,label`.
-- **Encoding**: UTF-8 without BOM.
-- **Delimiter**: Comma (`,`). If an input text contains commas, wrap the text in standard double quotes (`"`):
-  ```csv
-  text,label
-  "hey, where is my order?",Delivery
-  ```
-- **Label Consistency**: Labels are case-sensitive strings and must exactly match the string literals passed to `.Bind("Label", ...)` in your Go code.
-
-#### 2. Golden Rules for High-Accuracy Datasets
-
-| Rule | Specification | Engineering Rationale |
-| :--- | :--- | :--- |
-| **Minimum Sample Count** | **30 – 150 samples per class** | Guarantees enough subword co-occurrences for BPE and AdamW convergence. |
-| **Class Balance** | Keep sample ratios within **1:1 to 2:1** | Prevents the model from biasing predictions toward over-represented classes. |
-| **Phrasing Variety** | Vary syntax, length, and vocabulary | Mix short queries (`"refund plz"`), full sentences, questions, and commands. |
-| **Slang & Typos** | Deliberately include common mistakes | Expose the BPE tokenizer to misspellings (`"refnd"`, `"delivry"`, `"pasword"`). |
-| **Overlapping Word Disambiguation**| Include shared-word contrastive samples | Disambiguate `"cancel delivery alerts"` (Delivery) from `"cancel my charge"` (Refund). |
-| **Noise Exclusion** | **Do NOT add random noise rows** | The engine's linear OOV penalty and `< 0.60` threshold automatically isolate noise. |
-
-#### 3. Dataset Example: DOs vs. DONTs
+### Step 1: Structuring Domain Knowledge (`dataset.csv`)
 
 ```csv
 text,label
-# ✅ DO: Realistic phrasing, abbreviations, and sentence variety
-can u cancel order #49281? i bought it by mistake,Refund
-got charged twice on my card refund the extra charge asap,Refund
-tracking says delivered but mailbox is empty where is my stuff,Delivery
-sent back the return box 3 days ago when do i see money,Refund
-locked out of my account after 3 failed tries,Account
-
-# ❌ DONT: Robotic, repetitive keywords with zero variation
-refund,Refund
-refund please,Refund
-refund now,Refund
-delivery,Delivery
+i want to cancel my payment and request a refund,Refund
+where is my package delivery,Delivery
+forgot my account login password,Account
 ```
 
-### Step 2: Building Your Own AI — Training & Model Generation (`ib-train`)
-
-IntelliBranch provides two distinct training mechanisms: **[1. Standalone CLI Tool]** for CI/CD and terminal usage, and **[2. In-Code Programmatic Go API]** for dynamic in-process training.
-
-#### 1. Method A: Standalone CLI Training (`ib-train`)
-
-Build the standalone compiler binary and run the training pipeline:
+### Step 2: Training & Model Generation (`ib-train`)
 
 ```bash
-# 1. Compile the training tool
-go build -ldflags="-s -w" -o bin/ib-train.exe ./cmd/ib-train
-
-# 2. Compile model weights into Little-Endian binary
-./bin/ib-train.exe -data data/support_intents.csv -out weights/support.bin -epochs 50 -lr 0.005 -vocab 250 -seed 42
+python -m intellibranch.cli.train --data data/sample_dataset.csv --out weights/intent.bin --epochs 60 --vocab 200
 ```
 
-##### CLI Flag Reference
+### Step 3: Microsecond Live Routing (`dispatch`)
 
-| Flag | Default | Valid Range | Operational Role |
-| :--- | :--- | :--- | :--- |
-| **`-data`** | *(Required)* | Valid `.csv` path | Input CSV dataset file containing `text,label` columns. |
-| **`-out`** | `weights/intent.bin` | Valid `.bin` path | Target output file for the compiled Little-Endian binary weights. |
-| **`-epochs`** | `50` | `10 – 300` | Maximum number of AdamW backpropagation training epochs. |
-| **`-lr`** | `0.005` | `0.0001 – 0.05` | AdamW learning rate. Default `0.005` provides fast, stable convergence. |
-| **`-vocab`** | `250` | `100 – 2000` | Target BPE subword vocabulary size. 250 is optimal for 3–10 classes. |
-| **`-seed`** | `42` | Any `int64` | Random seed for deterministic train/validation split and initialization. |
+```python
+from intellibranch import Router
 
-#### 2. Method B: Programmatic Training via Go Code
+router = Router(model_path="weights/intent.bin", default_threshold=0.60)
+router.bind("Refund", lambda ctx, q: print(f"Refund: {q}"))
+router.bind("Delivery", lambda ctx, q: print(f"Delivery: {q}"))
+router.fallback(lambda ctx, q: print(f"Fallback: {q}"))
 
-Train and export binary weights directly inside your Go application without external processes:
-
-```go
-package main
-
-import (
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-func main() {
-	// 1. Load samples from CSV
-	samples, err := intellibranch.LoadDatasetCSV("data/support_intents.csv")
-	if err != nil {
-		log.Fatalf("Dataset load error: %v", err)
-	}
-
-	// 2. Configure training hyperparameters
-	config := intellibranch.DefaultTrainConfig()
-	config.Epochs = 50
-	config.LearningRate = 0.005
-	config.VocabSize = 250
-
-	// 3. Execute BPE + AdamW training pipeline
-	model, err := intellibranch.TrainModel(samples, config)
-	if err != nil {
-		log.Fatalf("Training failed: %v", err)
-	}
-
-	// 4. Serialize to Little-Endian binary with SHA-256 integrity hash
-	if err := intellibranch.SaveToFile(model, "weights/support.bin"); err != nil {
-		log.Fatalf("Model export failed: %v", err)
-	}
-
-	log.Println("Model successfully trained and saved!")
-}
-```
-
-#### 3. Training Pipeline Architecture & Phases
-
-```text
-[ CSV Dataset ] ──▶ [ Phase 1: BPE Subword Merge Extraction ] (Builds statistical vocabulary)
-                          │
-                          ▼
-                    [ Phase 2: Stratified 80/20 Train/Val Split ] (Preserves class balance)
-                          │
-                          ▼
-                    [ Phase 3: AdamW Optimization with GELU ] (Weight decay = 0.01)
-                          │
-                          ▼
-                    [ Phase 4: Early Stopping Monitor ] (Halts if Val Loss stagnates for 10 epochs)
-                          │
-                          ▼
-                    [ Phase 5: Little-Endian Binary Serialization ] (SHA-256 checksum injected)
-```
-
-#### 4. Interpreting Training Logs
-
-```text
-2026/09/26 15:47:23 Loading dataset from: data/support_intents.csv
-2026/09/26 15:47:23 Loaded 1015 training samples
-2026/09/26 15:47:23 Starting offline BPE + AdamW training pipeline...
-Epoch  10/50 - Train Loss: 0.0006 (Acc: 100.0%) | Val Loss: 0.3990 (Acc: 94.0%)
-Epoch  20/50 - Train Loss: 0.0002 (Acc: 100.0%) | Val Loss: 0.4485 (Acc: 94.0%)
-[Early Stopping] Triggered at epoch 30 (Train Loss: 0.0001, Val Loss: 0.4753)
-2026/09/26 15:47:25 Serializing trained model to Little-Endian binary: weights/support.bin
-2026/09/26 15:47:25 Training and binary export completed successfully.
-```
-
-- **Train Loss vs Val Loss**: Train accuracy reaching 100% with Val accuracy > 90% indicates strong generalization across unseen phrasing.
-- **Early Stopping**: The engine automatically halts training when validation loss stops improving, preventing overfitting and eliminating wasted CPU cycles. Total training finishes in ~1.5 to 2.0 seconds on standard CPUs.
-
-### Step 3: AI-Powered Branching — Microsecond Live Routing (`Dispatch`)
-
-Create a high-performance HTTP service routing incoming support requests in microseconds:
-
-```go
-package main
-
-import (
-	"context"
-	"encoding/json"
-	"log"
-	"net/http"
-	"time"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type RequestPayload struct {
-	Query  string `json:"query"`
-	UserID string `json:"user_id"`
-}
-
-type ResponsePayload struct {
-	Status  string  `json:"status"`
-	Action  string  `json:"action"`
-	Score   float32 `json:"confidence"`
-	Latency string  `json:"latency"`
-}
-
-func main() {
-	// 1. Initialize Router with a 0.60 calibrated confidence threshold
-	router, err := intellibranch.NewRouter("weights/support.bin", 0.60)
-	if err != nil {
-		log.Fatalf("Failed to initialize IntelliBranch: %v", err)
-	}
-
-	// 2. Bind business domain handlers
-	router.
-		Bind("Refund", func(ctx context.Context, payload any) error {
-			req := payload.(*RequestPayload)
-			log.Printf("[ACTION: Refund] Initiating refund process for user: %s", req.UserID)
-			return nil
-		}).
-		Bind("Delivery", func(ctx context.Context, payload any) error {
-			req := payload.(*RequestPayload)
-			log.Printf("[ACTION: Delivery] Querying carrier API for user: %s", req.UserID)
-			return nil
-		}).
-		Bind("Account", func(ctx context.Context, payload any) error {
-			req := payload.(*RequestPayload)
-			log.Printf("[ACTION: Account] Triggering MFA reset for user: %s", req.UserID)
-			return nil
-		}).
-		Fallback(func(ctx context.Context, payload any) error {
-			req := payload.(*RequestPayload)
-			log.Printf("[FALLBACK: Triage] Diverting ambiguous query to human queue. User: %s, Text: %s", req.UserID, req.Query)
-			return nil
-		})
-
-	// 3. Expose high-throughput HTTP handler
-	http.HandleFunc("/api/v1/route", func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-
-		var body RequestPayload
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-			http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
-			return
-		}
-
-		ctx, cancel := context.WithTimeout(r.Context(), 50*time.Millisecond)
-		defer cancel()
-
-		// Microsecond in-memory dispatch
-		trace := router.Inspect(body.Query)
-		_ = router.Dispatch(ctx, body.Query, &body)
-
-		resp := ResponsePayload{
-			Status:  "OK",
-			Action:  trace.PredictedLabel,
-			Score:   trace.Confidence,
-			Latency: time.Since(start).String(),
-		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(resp)
-	})
-
-	log.Println("IntelliBranch HTTP Router listening on :8080...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
-}
+router.dispatch(None, "cancel order and refund money", "query_payload")
 ```
 
 ---
 
 ## 5. Advanced Production Recipes
 
-### 5.1. Context Propagation & Timeouts
+### 5.1. Thread-Safe Atomic Hot-Reloading
 
-The `Handler` signature strictly adheres to Go's standard `context.Context`:
+IntelliBranch `Router` and `NeuroGate` support thread-safe atomic model replacement under live concurrent traffic without locks blocking the read path.
 
-```go
-router.Bind("Refund", func(ctx context.Context, payload any) error {
-    select {
-    case <-ctx.Done():
-        return ctx.Err() // Gracefully abort if downstream client disconnected
-    default:
-        // Execute business logic
-        return nil
-    }
-})
-```
+### 5.2. Telemetry & Active Learning Feedback Loop
+
+Drain uncertain or out-of-domain queries recorded in the ring buffer to retrain the next version of your weights.
+
+### 5.3. Semantic LLM Gateway & Cloud Bypass
+
+Filter routine user requests in microseconds locally ($0.00 cost) and escalate only genuine ambiguous or high-entropy requests to OpenAI/Claude.
 
 ---
 
-### 5.2. Atomic Zero-Downtime Weight Hot-Reloading
-
-`Router` natively encapsulates an atomic model pointer (`sync/atomic.Pointer[InferenceModel]`). You can reload new weights in production without recreating the router or dropping in-flight requests:
-
-```go
-package main
-
-import (
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-func HotReloadService(router *intellibranch.Router, newWeightPath string) {
-	// Atomically reloads weights and validates format v2 with zero downtime
-	if err := router.Reload(newWeightPath); err != nil {
-		log.Printf("Hot reload failed: %v", err)
-		return
-	}
-	log.Printf("Successfully hot-swapped inference model to: %s", newWeightPath)
-}
-```
-
----
-
-### 5.3. Whitebox Telemetry & Active Learning Feedback Loop
-
-`Router` provides an asynchronous lock-free ring buffer telemetry pipeline. Collect ambiguous, OOD (Out-Of-Distribution), or multi-intent fallback queries to retrain models automatically:
-
-```go
-// 1. Enable bounded telemetry ring buffer (capacity: 2048)
-router.EnableTelemetry(2048)
-
-// 2. Asynchronously drain collected drift events for active learning retraining
-events := router.DrainTelemetry()
-for _, ev := range events {
-	if ev.IsAmbiguous || ev.IsFallback {
-		slog.Warn("Uncertain or OOD query flagged for active learning dataset",
-			"text", ev.InputText,
-			"primary", ev.PredictedLabel,
-			"secondary", ev.SecondaryLabel,
-			"conf", ev.Confidence,
-			"entropy", ev.Entropy,
-		)
-	}
-}
-
-// 3. Or inspect single diagnostic trace
-trace := router.Inspect(userMessage)
-slog.Info("IntelliBranch dispatch complete",
-	"query", trace.InputText,
-	"selected_branch", trace.PredictedLabel,
-	"confidence", trace.Confidence,
-	"entropy", trace.Entropy,
-	"is_pipeline", trace.IsPipeline,
-	"is_ambiguous", trace.IsAmbiguous,
-	"is_fallback", trace.IsFallback,
-	"unknown_tokens", trace.UnknownTokenRatio,
-	"duration_micros", trace.LatencyMicros,
-)
-```
-
----
-
-### 5.4. Semantic LLM Gateway & Cloud Bypass
-
-Slash external Cloud LLM (OpenAI/Claude) costs by 80–90% and eliminate 1,000+ ms latency by resolving routine user queries with IntelliBranch in 6 μs:
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type LLMBypassGateway struct {
-	router *intellibranch.Router
-}
-
-func NewLLMBypassGateway(weightsPath string) (*LLMBypassGateway, error) {
-	// Initialize with 0.65 threshold to ensure high precision before local execution
-	r, err := intellibranch.NewRouter(weightsPath, 0.65)
-	if err != nil {
-		return nil, err
-	}
-	return &LLMBypassGateway{router: r}, nil
-}
-
-func (g *LLMBypassGateway) RouteUserQuery(ctx context.Context, query string) error {
-	trace := g.router.Inspect(query)
-
-	// In-Distribution: High confidence -> Execute microsecond Go handler
-	if !trace.IsFallback {
-		log.Printf("[BYPASS] Resolved locally in %d μs (Action: %s, Score: %.2f)",
-			trace.LatencyMicros, trace.PredictedLabel, trace.Confidence)
-		return g.router.Dispatch(ctx, query, nil)
-	}
-
-	// Out-of-Distribution: Low confidence / Noise -> Delegate to expensive Cloud LLM
-	log.Printf("[DELEGATE] Ambiguous query routed to Cloud LLM: %s", query)
-	return g.invokeExternalLLM(ctx, query)
-}
-
-func (g *LLMBypassGateway) invokeExternalLLM(ctx context.Context, query string) error {
-	// Call external OpenAI / Claude API (~1,200 ms latency)
-	fmt.Printf("[EXTERNAL LLM API] Processing payload: %s\n", query)
-	return nil
-}
-```
-
----
-
-### 5.5. Hierarchical Cascading Multi-Router
-
-Scale cleanly to 200+ distinct enterprise microservice actions without saturating a single model's Softmax layer:
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type CascadingServiceRouter struct {
-	domainRouter *intellibranch.Router
-	subRouters   map[string]*intellibranch.Router
-}
-
-func (c *CascadingServiceRouter) Dispatch(ctx context.Context, input string, payload any) error {
-	// Stage 1: Coarse domain isolation (~6.08 μs)
-	domainTrace := c.domainRouter.Inspect(input)
-	if domainTrace.IsFallback {
-		return fmt.Errorf("unknown business domain: %s", input)
-	}
-
-	subRouter, exists := c.subRouters[domainTrace.PredictedLabel]
-	if !exists {
-		return fmt.Errorf("no sub-router registered for domain: %s", domainTrace.PredictedLabel)
-	}
-
-	// Stage 2: Fine-grained action dispatch (~6.08 μs)
-	// Total pipeline executes in ~12.16 μs with zero memory allocation
-	return subRouter.Dispatch(ctx, input, payload)
-}
-```
-
----
-
-### 5.6. Context-Enriched Metadata Synthesis
-
-Synthesize structured metadata (roles, route paths, API versions) directly into the query string to branch across multi-dimensional criteria in a single inference pass:
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-func DispatchWithMetadata(ctx context.Context, router *intellibranch.Router, role, path, query string, payload any) error {
-	// BPE tokenizes bracketed tags into distinct subword coordinates.
-	// GELU hidden layers evaluate non-linear interaction between identity and intent.
-	synthesizedInput := fmt.Sprintf("[%s][%s] %s", role, path, query)
-	
-	// Example: "[ADMIN][/v1/billing] cancel subscription and wipe payment methods"
-	return router.Dispatch(ctx, synthesizedInput, payload)
-}
-```
-
----
-
-## 6. Low-Level Go Runtime Internals (For Systems Architects)
-
-For systems engineers, infrastructure architects, and high-frequency Go practitioners, this section documents the exact memory layout, escape analysis mechanics, and concurrency semantics of IntelliBranch.
-
-### 6.1. Memory Allocation & Escape Analysis Breakdown (Zero Allocations: 0 B/op)
-
-IntelliBranch provides two inference execution modes:
-
-```bash
-# 1. Standard Forward: Single 24-byte slice header escape
-BenchmarkForward-12         39544          30.21 μs/op          24 B/op          1 allocs/op
-
-# 2. Hardened Zero-Allocation In-Memory Inference (PredictSlots & PredictTokens)
-BenchmarkPredictTokens-12   39535          30.18 μs/op           0 B/op          0 allocs/op
-BenchmarkPredictSlots-12    39564          29.91 μs/op           0 B/op          0 allocs/op
-```
-
-#### How is 0 B/op (Zero Allocations) Achieved?
-In `pkg/intellibranch/runtime.go`, `PredictSlots` bypasses dynamic heap allocation completely by writing directly into a caller-provided stack struct:
-
-```go
-type MatchSlot struct {
-    Index      uint32
-    Confidence float32
-}
-
-type StaticInferenceResult struct {
-    Primary   MatchSlot
-    Secondary MatchSlot
-    Entropy   float32
-    Total     uint32
-}
-
-func (m *InferenceModel) PredictSlots(text string, out *StaticInferenceResult) error {
-    // 1. Stack arrays for subword tokenization IDs (max 128 tokens)
-    var tokenBuf [MaxSequenceTokens]uint32
-    n := m.Tokenizer.EncodeToBuf(text, tokenBuf[:])
-
-    // 2. Math inference runs inside recycled sync.Pool scratch buffers
-    buf := m.bufPool.Get().(*inferenceBuffer)
-    defer m.bufPool.Put(buf)
-
-    m.forwardInternal(tokenBuf[:n], buf)
-
-    // 3. Write Top-1 and Top-2 results directly into caller's stack struct
-    out.Primary = MatchSlot{Index: bestIdx, Confidence: bestScore}
-    out.Secondary = MatchSlot{Index: secIdx, Confidence: secScore}
-    out.Entropy = computeEntropy(buf.probs)
-    out.Total = uint32(len(m.Labels))
-    return nil
-}
-```
-
-- **Escape Analysis**: Because `StaticInferenceResult` is passed by pointer to a stack-local struct and its fields are populated without escaping, the Go compiler keeps memory strictly on the goroutine stack.
-- **Zero GC Pressure**: By eliminating heap allocations, IntelliBranch produces **zero garbage collection pauses**, guaranteeing deterministic P99 latency even under millions of queries per second.
-
----
-
-### 6.2. Lock-Free Read Path & Concurrency Guarantees
-
-In high-throughput microservices, lock contention on hot routing paths degrades latency percentiles (P99/P999). IntelliBranch implements an asymmetric concurrency design:
-
-1. **Immutable Model Core (`InferenceModel`)**:
-   - `Weights` (Embedding, W1, B1, W2, B2) are loaded once at startup into read-only contiguous memory slices.
-   - `Vocab` and `MergeRules` tables are strictly read-only after initialization.
-   - **Zero Read Locks Inside Model**: Multiple goroutines execute `Forward()` simultaneously without touching any mutex, atomic CAS loop, or channel.
-2. **`sync.RWMutex` at Router Boundary**:
-   - `Dispatch()` acquires `r.mu.RLock()`. Under pure dispatch traffic (zero runtime handler mutations), multiple CPU cores read concurrently with zero thread parking.
-   - If dynamic hot-reloading is required, see [Section 5.2 Atomic Hot-Reloading](#52-atomic-zero-downtime-weight-hot-reloading) for an atomic pointer swap approach that eliminates even the read-lock.
-3. **No False Sharing (Cache Line Bouncing)**:
-   - Scratch buffers are **goroutine-isolated** via `sync.Pool`. No two goroutines ever write to adjacent indices of the same matrix buffer, eliminating false sharing across L3 cache lines.
-
----
-
-### 6.3. IBRN Binary Wire Format Specification
-
-IntelliBranch models are compiled into a custom, compact Little-Endian binary (`.bin`) with zero external container dependencies (no Protobuf, no FlatBuffers, no JSON).
-
-```text
-+-------------------------------------------------------------------------------+
-|                        IBRN HEADER BLOCK (24 Bytes)                           |
-+-------------------+-------------------+-------------------+-------------------+
-|  Magic ("IBRN")   |  Version (uint32) | VocabSize (uint32)| EmbeddingD(uint32)|
-|     [0x00 - 0x03] |     [0x04 - 0x07] |     [0x08 - 0x0B] |     [0x0C - 0x0F] |
-+-------------------+-------------------+-------------------+-------------------+
-| HiddenDim (uint32)| NumClasses(uint32)|                                       |
-|     [0x10 - 0x13] |     [0x14 - 0x17] |                                       |
-+-------------------+-------------------+-------------------+-------------------+
-|                        CLASS LABELS BLOCK                                     |
-|  For each class: Length (uint32) + UTF-8 string bytes                         |
-+-------------------------------------------------------------------------------+
-|                        VOCABULARY BLOCK                                       |
-|  For each token: Length (uint32) + UTF-8 string bytes                         |
-+-------------------------------------------------------------------------------+
-|                        BPE MERGE RULES BLOCK                                  |
-|  For each rule: Token1 (uint32) + Token2 (uint32) + Target (uint32) [12 Bytes] |
-+-------------------------------------------------------------------------------+
-|                        TENSOR WEIGHTS BLOCK (IEEE 754 float32 Little-Endian)  |
-|  1. Embedding Table   : VocabSize * EmbeddingDim * 4 bytes                    |
-|  2. Layer 1 Weights   : EmbeddingDim * HiddenDim * 4 bytes                    |
-|  3. Layer 1 Bias      : HiddenDim * 4 bytes                                   |
-|  4. Layer 2 Weights   : HiddenDim * NumClasses * 4 bytes                      |
-|  5. Layer 2 Bias      : NumClasses * 4 bytes                                  |
-|  6. Positional (v2)   : MaxPositions (32) * EmbeddingDim * 4 bytes (v2 only)  |
-+-------------------------------------------------------------------------------+
-|                        INTEGRITY TRAILER (32 Bytes)                           |
-|  SHA-256 Checksum over all preceding bytes [TotalLen-32 : TotalLen]           |
-+-------------------------------------------------------------------------------+
-```
-
-- **Format Compatibility**: Fully backward-compatible. Version `0x0001` reads blocks 1–5; Version `0x0002` embeds 32 positional vectors (block 6) for word-order XOR disambiguation.
-- **Endianness**: Explicitly Little-Endian (`encoding/binary.LittleEndian`). Safe for cross-compiling on ARM64 and AMD64 architectures.
-- **Integrity Verification**: `crypto/sha256` recalculates the checksum during `LoadBinaryModel()`. Any bit rot, truncation, or malicious tampering results in an immediate `ErrChecksumFailed` halt.
-
----
-
-### 6.4. Hardware Cache Locality: Flat 1D Slices vs Pointer Indirection
-
-Many naive ML implementations in Go use slices of slices (`[][]float32`), creating severe pointer indirection and hardware cache thrashing:
-
-```go
-// ❌ NAIVE IMPLEMENTATION: Pointer chasing, scattered heap chunks, cache misses
-type BadWeights struct {
-    W1 [][]float32 // Each row is an independent heap allocation
-}
-
-// ✅ INTELLIBRANCH IMPLEMENTATION: Contiguous flat 1D slice
-type Weights struct {
-    W1 []float32 // Exactly 1 contiguous block of [EmbeddingDim * HiddenDim]
-}
-```
-
-In `pkg/intellibranch/ops.go`:
-
-```go
-func MatMulVecAdd(vec, mat, bias []float32, inDim, outDim int, out []float32) error {
-    copy(out, bias)
-    for i := 0; i < inDim; i++ {
-        v := vec[i]
-        rowOffset := i * outDim
-        for j := 0; j < outDim; j++ {
-            out[j] += v * mat[rowOffset+j] // Sequential memory access streaming
-        }
-    }
-    return nil
-}
-```
-
-- **Sequential Prefetching**: Memory is accessed in strictly sequential order (`rowOffset + j`). Modern CPU hardware prefetchers stream memory directly into L1/L2 caches without stalling the ALU.
-- **Total In-Memory Footprint**: A typical 3-class model requires ~108 KB of contiguous memory—small enough to reside permanently in the L2/L3 cache of a single modern CPU core.
-
----
-
-## 7. Go Beginner's Survival Guide & Safe Patterns
-
-If you are new to Go, you do not need to understand linear algebra or vector calculus. Think of IntelliBranch as an **intelligent, fuzzy `switch` statement that never crashes on typos**.
-
-### 7.1. Mental Syntax Mapping: `switch` vs `Router`
-
-| Standard Go Construct | IntelliBranch Construct | What It Does |
-| :--- | :--- | :--- |
-| `switch input {` | `router, _ := NewRouter("weights.bin", 0.60)` | Initializes the branching engine with a 60% confidence baseline. |
-| `case "Refund":` | `.Bind("Refund", func(...) error { ... })` | Registers the function to run when the query means "Refund". |
-| `default:` | `.Fallback(func(...) error { ... })` | Registers the safety net for unknown gibberish, noise, or low confidence. |
-| `switch evaluation` | `router.Dispatch(ctx, input, payload)` | Evaluates the input in 6 μs and executes the matching handler. |
-
-#### Code Comparison: Before and After
-
-```go
-// ❌ TRADITIONAL GO: Fails on "refnd plz", "reverse charge", or slang
-switch userInput {
-case "refund":
-    return processRefund()
-case "delivery":
-    return checkDelivery()
-default:
-    return handleUnknown()
-}
-
-// ✅ INTELLIBRANCH: Handles typos, slang, and novel phrasing seamlessly
-router.
-    Bind("Refund", func(ctx context.Context, payload any) error {
-        return processRefund()
-    }).
-    Bind("Delivery", func(ctx context.Context, payload any) error {
-        return checkDelivery()
-    }).
-    Fallback(func(ctx context.Context, payload any) error {
-        return handleUnknown()
-    })
-
-// Executes in ~6.08 microseconds
-_ = router.Dispatch(ctx, userInput, nil)
-```
-
----
-
-### 7.2. Safe Type Assertions: Preventing Runtime Panics
-
-In Go, `payload any` (or `interface{}`) can hold any data type. Beginners often write direct type assertions that crash the server with `panic: interface conversion` if the wrong type is passed.
-
-#### ❌ The Dangerous Pattern (Never do this in production)
-
-```go
-router.Bind("Refund", func(ctx context.Context, payload any) error {
-    // 💥 PANIC if payload is nil or a different struct!
-    req := payload.(*OrderRequest) 
-    fmt.Println(req.OrderID)
-    return nil
-})
-```
-
-#### ✅ The Safe "Comma-Ok" Pattern (Mandatory for Beginners)
-
-Always use the two-variable type assertion (`val, ok := payload.(*Type)`):
-
-```go
-router.Bind("Refund", func(ctx context.Context, payload any) error {
-    // 1. Guard against nil or mismatched payloads
-    req, ok := payload.(*OrderRequest)
-    if !ok {
-        return fmt.Errorf("invalid payload: expected *OrderRequest, got %T", payload)
-    }
-
-    // 2. Safely access fields
-    fmt.Printf("Processing refund for Order #%d\n", req.OrderID)
-    return nil
-})
-```
-
----
-
-### 7.3. 5-Minute Copy-Paste Quickstart
-
-Save this file as `quickstart.go` in your project root and run `go run quickstart.go` to test your first intelligent branch:
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-func main() {
-	// 1. Load the trained model weights
-	// (Ensure weights/intent.bin exists by running `ib-train` first)
-	router, err := intellibranch.NewRouter("weights/intent.bin", 0.60)
-	if err != nil {
-		log.Fatalf("Failed to load router: %v (Did you train the model first?)", err)
-	}
-
-	// 2. Define business actions
-	router.
-		Bind("Refund", func(ctx context.Context, payload any) error {
-			fmt.Printf("-> [ACTION] Routing to Refund Service (Payload: %v)\n", payload)
-			return nil
-		}).
-		Bind("Delivery", func(ctx context.Context, payload any) error {
-			fmt.Printf("-> [ACTION] Routing to Carrier Tracking (Payload: %v)\n", payload)
-			return nil
-		}).
-		Fallback(func(ctx context.Context, payload any) error {
-			fmt.Printf("-> [FALLBACK] Query unconfident or noise. Safely isolated: %v\n", payload)
-			return nil
-		})
-
-	ctx := context.Background()
-
-	// 3. Dispatch varied user inputs (Executes in microseconds)
-	queries := []string{
-		"can u cancel order #49281? bought by mistake", // Slang / Question
-		"tracking says delivered but mailbox is empty",  // Natural phrasing
-		"asdfghjkl12345!@#$",                           // Random noise
-	}
-
-	for _, q := range queries {
-		fmt.Printf("\nEvaluating: %q\n", q)
-		_ = router.Dispatch(ctx, q, "SamplePayload")
-	}
-}
-```
-
----
-
-### 7.4. Top 4 Beginner Pitfalls & Instant Fixes
-
-| Pitfall | Root Cause | Instant Fix |
-| :--- | :--- | :--- |
-| **`os.ErrNotExist` on startup** | Executing `go run` from a subfolder makes `"weights/intent.bin"` relative path invalid. | Run commands from the project root, or pass absolute paths using `filepath.Abs("weights/intent.bin")`. |
-| **Label String Mismatch** | CSV has `Refund` (capitalized), but Go code binds `.Bind("refund", ...)` (lowercase). | Labels are strictly **case-sensitive**. Ensure `.Bind("Label", ...)` matches your CSV `label` column exactly. |
-| **Everything goes to Fallback** | `threshold` was set too high (e.g. `0.95`). | Lower `threshold` to `0.55` – `0.65`. In multi-class models, a probability of `0.70` is already very strong confidence. |
-| **Silent Handler Failure** | The bound handler returned an unhandled `error` that was ignored with `_ = router.Dispatch(...)`. | Always inspect the returned error: `if err := router.Dispatch(...); err != nil { log.Println(err) }`. |
-
----
-
-## 8. Real-World Architectural Blueprints & Idea Guide
-
-This section provides production-ready implementation blueprints, dataset schemas, and architectural ideas across diverse engineering domains.
-
----
-
-### 8.1. Blueprint 1: High-Throughput Kafka Stream QoS Partitioning
-
-#### The Engineering Challenge
-In high-throughput logging and telemetry systems (Kafka, RabbitMQ, Vector), millions of unformatted error logs, panic dumps, and database timeouts arrive every minute. Traditional regexes burn 100% CPU and cause consumer lag.
-
-#### Dataset Blueprint (`data/telemetry_qos.csv`)
-```csv
-text,label
-"FATAL: connection to database host terminated abnormally",P0_Critical
-"panic: runtime error: invalid memory address or nil pointer dereference",P0_Critical
-"upstream request timeout after 30000ms from payment-gateway",P1_High
-"redis: client connection pool exhausted, queue length 1024",P1_High
-"disk utilization warning: /var/log reached 85% capacity",P2_Normal
-"deprecated API call /v1/user/info will be decommissioned",P3_Low
-```
-
-#### Implementation Architecture (Kafka Consumer Hook)
-```go
-package main
-
-import (
-	"context"
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type KafkaQoSDispatcher struct {
-	router *intellibranch.Router
-}
-
-func (k *KafkaQoSDispatcher) ProcessMessage(ctx context.Context, rawLog string, offset int64) {
-	// Evaluates log severity in 6.08 μs with zero memory allocation
-	_ = k.router.Dispatch(ctx, rawLog, offset)
-}
-
-func SetupKafkaQoSRouter() (*KafkaQoSDispatcher, error) {
-	r, err := intellibranch.NewRouter("weights/qos.bin", 0.60)
-	if err != nil {
-		return nil, err
-	}
-
-	r.
-		Bind("P0_Critical", func(ctx context.Context, payload any) error {
-			// Immediately push to VIP pager-duty queue & SMS alert
-			log.Printf("[P0 ALERT] Offset %v routed to on-call engineer", payload)
-			return nil
-		}).
-		Bind("P1_High", func(ctx context.Context, payload any) error {
-			// Push to high-priority retry partition
-			return nil
-		}).
-		Fallback(func(ctx context.Context, payload any) error {
-			// Shunt normal logs to cold S3/Elasticsearch storage
-			return nil
-		})
-
-	return &KafkaQoSDispatcher{router: r}, nil
-}
-```
-
----
-
-### 8.2. Blueprint 2: Offline Edge & Embedded Appliance Control
-
-#### The Engineering Challenge
-Low-power edge devices (smart home hubs, POS hardware, Raspberry Pi / ARM64, factory PLCs) have strict hardware limits (32 MB – 128 MB RAM) and intermittent or zero internet connectivity. They cannot run 4 GB local LLMs or call external cloud APIs.
-
-#### Dataset Blueprint (`data/smart_appliance.csv`)
-```csv
-text,label
-"room is too dark turn on the living room light",LightOn
-"it's pitch black can u switch on the bulb",LightOn
-"going to bed turn off all lights please",LightOff
-"shut down kitchen lamp",LightOff
-"what is the current room temperature",TempSensor
-"is it getting too hot in here check degrees",TempSensor
-```
-
-#### Implementation Architecture (Offline GPIO Actuator)
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type HardwareController struct {
-	router *intellibranch.Router
-}
-
-func (h *HardwareController) ExecuteCommand(ctx context.Context, spokenText string) {
-	// Operates offline in < 150 KB RAM with zero CGO dependencies
-	_ = h.router.Dispatch(ctx, spokenText, nil)
-}
-
-func SetupHardwareRouter() (*HardwareController, error) {
-	r, err := intellibranch.NewRouter("weights/appliance.bin", 0.65)
-	if err != nil {
-		return nil, err
-	}
-
-	r.
-		Bind("LightOn", func(ctx context.Context, payload any) error {
-			fmt.Println("[GPIO 18 HIGH] Living room relay closed -> Light ON")
-			return nil
-		}).
-		Bind("LightOff", func(ctx context.Context, payload any) error {
-			fmt.Println("[GPIO 18 LOW] Living room relay opened -> Light OFF")
-			return nil
-		}).
-		Fallback(func(ctx context.Context, payload any) error {
-			fmt.Println("[AUDIO FEEDBACK] 'Sorry, I did not understand that command.'")
-			return nil
-		})
-
-	return &HardwareController{router: r}, nil
-}
-```
-
----
-
-### 8.3. Blueprint 3: Automated CI/CD Failure Triage & Self-Healing
-
-#### The Engineering Challenge
-In enterprise CI/CD systems (GitHub Actions, GitLab CI, ArgoCD), builds fail for dozens of reasons: flaky network timeouts, OOM runner kills, lint/syntax errors, or broken dependencies. Engineers waste hours manually re-running builds that failed due to transient issues.
-
-#### Dataset Blueprint (`data/cicd_triage.csv`)
-```csv
-text,label
-"dial tcp 10.0.4.12:443: i/o timeout while pulling docker layer",AutoRetry
-"connection reset by peer during npm package download",AutoRetry
-"fatal: out of memory (allocated 4194304) (tried to allocate 1048576)",ScaleRunner
-"Container killed due to OOM limit exceeded in cgroup",ScaleRunner
-"syntax error: unexpected token newline near line 42",AlertAuthor
-"undefined: variable userToken in file auth.go:12",AlertAuthor
-```
-
-#### Implementation Architecture (CI Runner Webhook Daemon)
-```go
-package main
-
-import (
-	"context"
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type BuildFailureWebhook struct {
-	router *intellibranch.Router
-}
-
-func (b *BuildFailureWebhook) OnJobFailed(ctx context.Context, jobID string, errorTail string) {
-	// Analyzes the last 512 bytes of compiler logs in 6 μs
-	_ = b.router.Dispatch(ctx, errorTail, jobID)
-}
-
-func SetupCICDRouter() (*BuildFailureWebhook, error) {
-	r, err := intellibranch.NewRouter("weights/cicd.bin", 0.65)
-	if err != nil {
-		return nil, err
-	}
-
-	r.
-		Bind("AutoRetry", func(ctx context.Context, payload any) error {
-			log.Printf("[SELF-HEALING] Re-triggering transient network failure for job: %v", payload)
-			// Trigger gitlab/github retry API
-			return nil
-		}).
-		Bind("ScaleRunner", func(ctx context.Context, payload any) error {
-			log.Printf("[AUTO-SCALE] Re-running job %v on 16GB high-memory runner", payload)
-			return nil
-		}).
-		Bind("AlertAuthor", func(ctx context.Context, payload any) error {
-			log.Printf("[NOTIFY] Code defect detected. Sending Slack ping to commit author for job: %v", payload)
-			return nil
-		})
-
-	return &BuildFailureWebhook{router: r}, nil
-}
-```
-
----
-
-### 8.4. Blueprint 4: FinTech Legacy Protocol & Dynamic Packet Dispatch
-
-#### The Engineering Challenge
-Core banking, payment gateways, and telecommunications backends process proprietary ISO-8583 text protocols or unstructured legacy packets. Traditional parsers panic when incoming packets have unexpected padding or non-standard variations.
-
-#### Dataset Blueprint (`data/banking_wire.csv`)
-```csv
-text,label
-"0200 PAN:4532XXXXXXXX1234 PROC:000000 AMT:0000050000 CURR:840",TransferReq
-"WIRE_TX REQ ACC:98421 TO:11204 AMOUNT:500.00 USD AUTH_TOKEN:X",TransferReq
-"0800 NETWORK MANAGEMENT ECHO TEST PING PONG",NetworkEcho
-"SYS_HEARTBEAT TERMINAL_ID:9942 STATUS:READY",NetworkEcho
-"0400 CHARGEBACK REVERSAL AUTH_CODE:9421 REF:883921",Reversal
-"FORCE_REVERSE TXN_ID:77392 FRAUD_DISPUTE_CONFIRMED",Reversal
-```
-
-#### Implementation Architecture (Packet Ingestion Gateway)
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-type CoreBankingGateway struct {
-	router *intellibranch.Router
-}
-
-func (c *CoreBankingGateway) RouteWirePacket(ctx context.Context, packetString string, sessionID string) error {
-	// Zero regex overhead: Routes directly to banking microservice in 6.08 μs
-	return c.router.Dispatch(ctx, packetString, sessionID)
-}
-
-func SetupBankingRouter() (*CoreBankingGateway, error) {
-	r, err := intellibranch.NewRouter("weights/banking.bin", 0.70)
-	if err != nil {
-		return nil, err
-	}
-
-	r.
-		Bind("TransferReq", func(ctx context.Context, payload any) error {
-			fmt.Printf("[FINTECH: Transfer] Session %v routed to ledger transaction engine\n", payload)
-			return nil
-		}).
-		Bind("Reversal", func(ctx context.Context, payload any) error {
-			fmt.Printf("[FINTECH: Chargeback] Session %v routed to dispute resolution engine\n", payload)
-			return nil
-		}).
-		Bind("NetworkEcho", func(ctx context.Context, payload any) error {
-			// Fast pong response
-			return nil
-		}).
-		Fallback(func(ctx context.Context, payload any) error {
-			fmt.Printf("[FINTECH: Isolation] Malformed wire packet sandboxed for audit. Session: %v\n", payload)
-			return nil
-		})
-
-	return &CoreBankingGateway{router: r}, nil
-}
-```
-
----
-
-## 9. 6-Domain Multi-Task Demonstration Suite: Proving the Evolution of Control Flow
-
-Traditional programming constructs (`if`, `switch`, `hash map`, `regex`) were conceived for discrete, exact-byte matching. When applied to real-world language, colloquial variants, or high-volume unstructured logs, **they suffer structural collapse**. 
-
-IntelliBranch replaces discrete string comparison with **continuous vector-coordinate routing in ~30 μs**. The bundled demonstration driver (`cmd/ib-demo`) proves this superiority across 6 isolated enterprise domains:
-
-### 9.1. Architectural Showdown: Retro Branching Collapse vs. IntelliBranch
-
-| Domain | Why Traditional Branching (`if`, `switch`, `map`, `regex`) Collapses | How IntelliBranch Proves Architectural Dominance |
-| :--- | :--- | :--- |
-| **1. E-Commerce CS Gateway** | `strings.Contains` collapses opposite intents (`"refund delivery"` vs `"delivery refund"`). Regex rules explode to $O(N!)$ permutations. | Learned Positional Embeddings ($P_{32 \times 64}$) disambiguate token order. `DispatchPipeline` chains multi-intent actions cleanly. |
-| **2. Semantic LLM Gateway** | Exact-key hash maps (`map[string]T`) have 0% hit rate on natural queries, wasting $0.02 and 1.5s per routine request on cloud LLMs. | Resolves routine commands locally in **30 μs at $0.00**. Shannon Entropy ($> 1.80$) isolates true OOD queries to OpenAI GPT-4o. |
-| **3. High-Throughput SRE Triage** | Complex regex engines burn 100% CPU on 100k logs/sec (ReDoS). Heap allocations trigger GC stop-the-world latency spikes. | Stack-allocated inference (`PredictSlots`) operates at **0 B/op and 0 allocs/op**, sustaining 33k+ ops/sec per core with 0ns GC pauses. |
-| **4. Offline Edge IoT Control** | `switch(cmd)` fails on everyday spoken variants (`"it's freezing"` != `"turn on heat"`). Local 7B LLMs require 4GB+ RAM. | Under 180 KB Little-Endian binary runs sub-milliwatt offline on embedded chips, routing colloquial commands directly to GPIO in microseconds. |
-| **5. Automated CI/CD Remediation**| Compiler error formatting fluctuates across toolchains, causing brittle regex matchers to silently fail and drop automated healing. | Ingests raw error tails and generalizes statistical subwords into deterministic remediation actions (`AutoRetry`, `ScaleUp`, `NotifyAuthor`). |
-| **6. FinTech Memo Fraud Audit** | Keyword blacklists are trivially bypassed by obfuscation (`"p0lice"`). Binary `if/else` creates false positives or fraud leakage. | 3-tier margin scoring triggers Step-Up 2FA (`Ambiguous`) when scam probability is borderline, introducing dynamic middle-ground control. |
-
-### 9.2. Compiling and Running the Driver (Zero-Download Auto-Training)
-
-Because IntelliBranch forges its domain neural models directly from dataset CSVs without downloading third-party weights, **no manual weight downloads are necessary**. When `ib-demo` runs, it detects missing binary models and auto-trains them in memory in under 2 seconds:
-
-```bash
-# Option 1: Direct instantaneous run via Go CLI
-go run ./cmd/ib-demo
-
-# Option 2: Compile a static standalone binary
-go build -ldflags="-s -w" -o bin/ib-demo.exe ./cmd/ib-demo
-
-# Run all 6 domains sequentially in automated showcase mode
-./bin/ib-demo.exe -domain all
-
-# Or inspect a specific enterprise domain
-./bin/ib-demo.exe -domain cs       # E-Commerce CS Gateway (XOR & Multi-Intent Pipeline)
-./bin/ib-demo.exe -domain llm      # Semantic LLM Gateway & Cloud Bypass ($0.00 vs $0.02)
-./bin/ib-demo.exe -domain sre      # High-Throughput SRE Log Triage (0 B/op via PredictSlots)
-./bin/ib-demo.exe -domain iot      # Offline Edge IoT Command Dispatcher
-./bin/ib-demo.exe -domain cicd     # Automated CI/CD Failure Triage & Self-Healing
-./bin/ib-demo.exe -domain fintech  # FinTech Transaction Memo Audit & 2FA Challenge
-```
-
-### 9.3. Sample Output
-
-```text
-================================================================================
-      INTELLIBRANCH v2.0 - 6-DOMAIN MULTI-TASK DEMONSTRATION SUITE
-================================================================================
-
->>> DOMAIN: 3. High-Throughput SRE Log Triage (Zero Allocation: 0 B/op)
-  • Input    : "fatal error: runtime: out of memory allocating 4194304 bytes"
-    Expect   : P0 OutOfMemory
-    Inference: OutOfMemory (Confidence: 99.98%, Entropy: 0.0033, Latency: 0 μs)
-    [P0 CRITICAL] Trigger Horizontal Pod Autoscaler & restart worker
-
-    [Zero-Allocation Stack Demonstration via PredictSlots]
-    Raw Log     : "kernel killed process worker-task due to host memory starvation"
-    Slot Matched: OutOfMemory (Confidence: 99.99%, Entropy: 0.0017, Alloc: 0 B/op)
-```
-
----
-
-## 10. Epilogue: An Architectural Manifesto on the Evolution of Control Flow
-
-> *"In the beginning, there was `JMP`. Then came `if`. And for fifty years, computer science fell asleep."*  
-> — Thoughts on Software Evolution from **gluedays@gmail.com**
-
-In 1945, the Von Neumann architecture laid the physical foundation of modern computing with a crude primitive: the conditional jump (`JMP` / `goto`). The machine simply altered its instruction pointer based on zero-flags in silicon registers.
-
-In 1968, Edsger W. Dijkstra published his seminal paper, *"Go To Statement Considered Harmful"*. That intellectual revolution forced programming languages to evolve: unruly jumps were disciplined into structured, deterministic control flow—giving birth to the ubiquitous `if`, `else`, and `switch`. For a world governed by punch cards, clean integers, and rigid ASCII strings, discrete equality matching was a masterpiece.
-
-**However, that was half a century ago.**
-
-Today, the digital landscape has undergone an irreversible phase transition. Humanity no longer feeds software with pristine 4-byte integers and sanitized alphanumeric enums. Modern systems are inundated with an ocean of **polymorphic, unstructured, noisy, colloquial, and contextual human reality**:
-- Typo-ridden mobile messages, dialect slang, and conversational phrasing.
-- Asynchronous high-throughput log streams with mutating compiler stack traces.
-- Multi-dimensional contextual intents where word order inverts business logic (`"refund delivery"` vs `"delivery refund"`).
-
-Yet, look at modern programming languages—whether Go, Rust, C++, Java, or Python. **Their fundamental control flow primitive has not evolved a single millimeter since the 1970s.**
-
-Engineers are still desperately stringing together brittle `if` statements, bloating codebases with thousands of fragile regexes, and watching servers collapse under ReDoS backtracks and CPU saturation. When regex fails, the industry swings to the opposite extreme of absurdity: burning millions of dollars routing simple string branches to 400-billion-parameter cloud LLMs, waiting 2,000 milliseconds and paying $0.03 just to pick an execution branch.
-
-**This is architectural stagnation. Retro conditional branching must evolve.**
-
-Control flow must transcend discrete, byte-exact binary matching. It must evolve into **continuous geometric vector-space routing**:
-1. Branching should not break because of a single misplaced character or slang synonym.
-2. Control flow must natively understand semantic context, token permutation, and feature interactions in single-digit microseconds.
-3. Decision boundaries must be probabilistic and multi-tiered—safely executing confident branches, gracefully prompting when ambiguous, and deterministically isolating out-of-distribution noise without panic.
-
-**IntelliBranch is not just a tool; it is a working manifesto.** It proves that a self-contained, domain-trained neural routing engine running in pure Go can replace brittle retro branching at **~30 microseconds with strictly 0 B/op heap allocation**.
-
-The future of programming languages lies in elevating the compiler and runtime to understand continuous semantic topology. The era of blind discrete branching is over.
-
+## 6. IBRN Binary Wire Format Specification
+
+- **Magic Signature**: `IBRN` (4 Bytes Little-Endian)
+- **Version**: `2` (uint32)
+- **Hyperparameters**: VocabSize, EmbeddingDim, HiddenDim, NumClasses (4x uint32)
+- **Labels Block**: Length-prefixed UTF-8 strings
+- **Vocabulary Block**: Length-prefixed UTF-8 subwords
+- **BPE Merge Rules**: `(token1, token2, target)` tuples (3x uint32)
+- **Tensors (IEEE 754 float32)**:
+  - Embedding Table: `[VocabSize * EmbeddingDim]`
+  - Positional Embeddings: `[128 * EmbeddingDim]`
+  - Layer 1 Weights: `[EmbeddingDim * HiddenDim]`
+  - Layer 1 Bias: `[HiddenDim]`
+  - Layer 2 Weights: `[HiddenDim * NumClasses]`
+  - Layer 2 Bias: `[NumClasses]`
+- **Checksum**: SHA-256 (32 Bytes over all preceding bytes)

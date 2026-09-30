@@ -1,16 +1,14 @@
-# IntelliBranch
-<img src="https://github.com/user-attachments/assets/3413a486-d71c-4285-841d-76bbe74f830a" width="226" height="200" alt="Image" align="right" style="margin-left: 15px; margin: 10px;">
+# IntelliBranch (Python)
 <p align="center">
-  <strong>Directly Creates and Runs Its Own Neural AI in Pure Go</strong><br>
-  <em>Stop borrowing third-party AIs. This engine creates its own domain artificial intelligence from scratch in 1.5 seconds, routing execution flow in ~30 μs with 0 B/op (Zero Allocations), Zero Downloads, and Zero CGO.</em>
+  <strong>Directly Creates and Runs Its Own Neural AI in Pure Python</strong><br>
+  <em>Stop borrowing third-party AIs. This engine creates its own domain artificial intelligence from scratch in under 2 seconds, routing execution flow in microseconds with Zero External AI Downloads and zero heavy deep learning framework dependencies.</em>
 </p>
 
 <p align="center">
-  <a href="#benchmarks"><img src="https://img.shields.io/badge/Latency-~30_μs-brightgreen.svg" alt="Latency"></a>
-  <a href="#benchmarks"><img src="https://img.shields.io/badge/Allocs-0_B/op_(0_allocs)-blue.svg" alt="Allocations"></a>
+  <a href="#benchmarks"><img src="https://img.shields.io/badge/Latency-Microseconds-brightgreen.svg" alt="Latency"></a>
   <img src="https://img.shields.io/badge/Wire_Format-v2_Positional-orange.svg" alt="Format v2">
-  <img src="https://img.shields.io/badge/CGO-Zero_Disabled-success.svg" alt="CGO Zero">
-  <img src="https://img.shields.io/badge/Go-1.21+-00ADD8.svg" alt="Go Version">
+  <img src="https://img.shields.io/badge/Dependencies-NumPy_Only-blue.svg" alt="NumPy">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB.svg" alt="Python Version">
   <img src="https://img.shields.io/badge/License-MIT-lightgrey.svg" alt="License">
 </p>
 
@@ -24,7 +22,7 @@
 
 **IntelliBranch does NOT borrow, lease, or download external AI models. This engine directly creates and runs its own domain artificial intelligence from scratch.**
 
-Instead of relying on brittle regex matching or calling bloated external LLMs, it **manufactures a domain-specific lightweight neural network directly from your dataset in under 2 seconds**. It maps typos, slang, inverted syntax, and colloquial phrasing into a continuous latent vector space—routing execution flow directly to your bound Go functions in **microseconds (~30 μs) with strictly 0 B/op heap allocation**.
+Instead of relying on brittle regex matching or calling bloated external LLMs, it **manufactures a domain-specific lightweight neural network directly from your dataset in under 2 seconds**. It maps typos, slang, inverted syntax, and colloquial phrasing into a continuous latent vector space—routing execution flow directly to your bound Python handlers in **microseconds with 100% binary compatibility with existing IntelliBranch v2 models**.
 
 ```
 Incoming Request ("bruh can u refund order #49281")
@@ -56,555 +54,155 @@ Incoming Request ("bruh can u refund order #49281")
 
 Modern backends face an architectural dilemma when routing unstructured or noisy user requests:
 
-```go
-// ❌ RETRO BRANCHING: Brittle, explodes in complexity, collapses under real-world noise
-if strings.Contains(input, "refund") || strings.Contains(input, "cancel") {
-    // FAILS on: "sent the return box a week ago when do i get my money back"
-    // FAILS on: "can u reverse the charge?" (typos, slang, synonyms)
-    // MISROUTES on: "cancel shipment delay notifications" (word collision)
-}
+```python
+# ❌ RETRO BRANCHING: Brittle, explodes in complexity, collapses under real-world noise
+if "refund" in query or "cancel" in query:
+    # FAILS on: "sent the return box a week ago when do i get my money back"
+    # FAILS on: "can u reverse the charge?" (typos, slang, synonyms)
+    # MISROUTES on: "cancel shipment delay notifications" (word collision)
+    pass
 
-// ❌ CLOUD LLMs: Massive network latency, recurring per-token cost, third-party dependency
-// Latency: 400ms – 2,500ms (Unusable in high-throughput microservices)
-// Cost: $0.0015 – $0.03 per request (Bills explode under scale)
-// Vulnerability: Outages, rate limits, JSON hallucination, network partitions
+# ❌ CLOUD LLMs: Massive network latency, recurring per-token cost, third-party dependency
+# Latency: 400ms – 2,500ms (Unusable in high-throughput microservices)
+# Cost: $0.0015 – $0.03 per request (Bills explode under scale)
+# Vulnerability: Outages, rate limits, JSON hallucination, network partitions
 
-// ❌ LOCAL LLMs & SLMs (Ollama, llama.cpp, Mistral-7B, Phi-3): Severe host resource exhaustion
-// Memory: Monopolizes 4.5 GB to 8.0 GB+ of RAM/VRAM just to pick a 4-byte enum
-// CPU Starvation: Burns 100% CPU across multiple cores, starving companion microservices
-// Deployment Complexity: Requires CGO, C++ shared libraries (libllama.so), or background daemons
+# ❌ LOCAL LLMs & SLMs (Ollama, llama.cpp, Mistral-7B, Phi-3): Severe host resource exhaustion
+# Memory: Monopolizes 4.5 GB to 8.0 GB+ of RAM/VRAM just to pick a simple intent enum
+# CPU Starvation: Burns 100% CPU across multiple cores, starving companion microservices
+# Deployment Complexity: Requires heavy GPU drivers, C++ runtimes, or background daemons
 
-// ✅ INTELLIBRANCH: Self-Generated Micro-AI (In-Memory Go Engine)
-// Memory Footprint: Under 180 KB (25,000x smaller than quantized 7B models)
-// Latency: ~30 μs with 0 B/op (0 allocs) and deterministic 3-tier fallback
-// Deployment: 100% Pure Go with CGO_ENABLED=0 single static binary
+# ✅ INTELLIBRANCH: Self-Generated Micro-AI (In-Memory Python Engine)
+# Memory Footprint: Under 180 KB (25,000x smaller than quantized 7B models)
+# Latency: Microseconds execution with deterministic 3-tier fallback
+# Deployment: Pure Python + NumPy without PyTorch/TensorFlow weight or daemon overhead
 ```
 
 ### Architectural Comparison Matrix
 
-| Capability | Retro Branching (`if` / Regex) | Cloud LLMs (OpenAI / Claude) | Local LLMs (Ollama / llama.cpp) | **IntelliBranch v2.0 (Embedded Engine)** |
+| Capability | Retro Branching (`if` / Regex) | Cloud LLMs (OpenAI / Claude) | Local LLMs (Ollama / llama.cpp) | **IntelliBranch v2.0 (Python Engine)** |
 | :--- | :--- | :--- | :--- | :--- |
-| **Inference Latency** | < 1 μs | 300 ms – 2,500 ms (Network bound) | 30 ms – 300 ms (Compute bound) | **~30 μs (In-Memory)** |
-| **Throughput (per core)** | > 500,000 req/sec | ~50 req/sec (Rate limited) | ~20–50 req/sec (CPU saturated) | **> 33,000 req/sec (Zero Alloc)** |
-| **Runtime Allocation** | 0 B/op | High (HTTP payload) | High (CGO buffers) | **0 B/op (0 allocs/op)** |
+| **Inference Latency** | < 1 μs | 300 ms – 2,500 ms (Network bound) | 30 ms – 300 ms (Compute bound) | **Microseconds (In-Memory)** |
+| **Throughput (per core)** | > 500,000 req/sec | ~50 req/sec (Rate limited) | ~20–50 req/sec (CPU saturated) | **> 1,500 req/sec (Python + NumPy)** |
 | **System Memory (RAM)** | Negligible | External service | **4.5 GB – 8.0 GB+ (VRAM / RAM)** | **< 180 KB (Format v2)** |
 | **Token Order Awareness** | Rigid regex position | ✅ Transformer Attention | ✅ Transformer Attention | ✅ **Learned Positional Embeddings** |
-| **Hardware Reqs** | Standard CPU | External service | High-end GPU or 8+ Core CPU | **Runs on a $5 VPS (16MB container)** |
+| **Hardware Reqs** | Standard CPU | External service | High-end GPU or 8+ Core CPU | **Runs on any minimal container / edge** |
 | **Operational Cost** | $0.00 | $0.0015+ per call | High hardware/electricity cost | **$0.00 (Self-contained)** |
-| **Hot Weight Reload** | Binary recompile | API model string switch | Multi-second model reload | **Lock-free Atomic Hot-Swap (`0 ns` stop)** |
+| **Hot Weight Reload** | Process restart | API model string switch | Multi-second model reload | **Thread-safe Atomic Hot-Swap** |
 | **Active Learning Loop** | N/A | Manual logging | N/A | **Built-in Ring Buffer Telemetry** |
-| **Deployment Complexity** | Single binary | API client | CGO / C++ runtime / Ollama daemon | **Pure Go (`CGO_ENABLED=0`)** |
+| **Deployment Complexity** | Script | API client | C++ runtime / Ollama daemon | **`pip install` / Pure Python + NumPy** |
 
 ---
 
-## Key Highlights
+## Quickstart: 60-Second Setup
 
-- **Zero Downloads & On-The-Fly AI Creation**: You never download gigabytes of pre-trained weights from HuggingFace or lease external APIs. IntelliBranch forges a domain neural AI model directly from your CSV in under 2 seconds.
-- **Zero Allocations on Hot Path (`0 B/op`)**: `PredictSlots` executes inference without triggering GC pressure, returning zero-heap stack results.
-- **Semantic XOR & Word Order Disambiguation**: Format v2 embeds 32 positional vectors coupled with non-linear $GELU(E_i + P_i)$ pooling, mathematically distinguishing permutations like `"delivery refund"` from `"refund delivery"`.
-- **3-Tier Decision Pipeline**: Classifies predictions into **Definite** (High confidence), **Ambiguous** (Borderline/narrow margin), or **Fallback** (Out-of-Distribution / High Shannon Entropy).
-- **Multi-Intent Pipeline Support**: Automatically executes composite pipelines when secondary intent confidence meets multi-intent thresholds.
-- **Lock-Free Atomic Hot-Swap & Telemetry**: Replace model weights on live traffic without locks (`sync/atomic.Pointer`), and stream drift queries into a bounded ring buffer for active learning.
-
----
-
-## Benchmarks
-
-Benchmarked on an AMD Ryzen 5 5600H (12 threads) running pure Go standard runtime (`go test -bench="." -benchmem`):
-
-| Benchmark Target | Ops / Sec | Latency | Memory / Op | Allocations |
-| :--- | :--- | :--- | :--- | :--- |
-| **`BenchmarkPredictSlots`** | **33,433 ops/sec** | **29.91 μs** | **0 B/op** | **0 allocs/op** |
-| **`BenchmarkPredictTokens`** | **33,126 ops/sec** | **30.18 μs** | **0 B/op** | **0 allocs/op** |
-| **`BenchmarkForward`** | **33,091 ops/sec** | **30.21 μs** | **24 B/op** | **1 allocs/op** |
-| **`BenchmarkGELU`** | **494,071 ops/sec** | **2.02 μs** | **0 B/op** | **0 allocs/op** |
-
----
-
-## 3-Step Lifecycle
-
-### Step 1: AI Design — Prepare Your Domain Knowledge (`data/sample_dataset.csv`)
-Create a clean two-column CSV containing natural user queries and corresponding target labels:
-
-```csv
-text,label
-I want to cancel my payment and request a refund,Refund
-Where is my package and delivery tracking,Delivery
-Forgot my account password please reset,Account
-sent the return box a week ago when do i get my money back,Refund
-yo i typed the wrong apt number please update address,Delivery
-locked out of my account after 3 tries help pls,Account
-```
-
-### Step 2: Build Your Own AI — Compile Model Weights (`ib-train.exe`)
-Train your domain vocabulary and neural weights into a compact Little-Endian binary (`intent.bin`) using the standalone CLI:
+### 1. Installation
 
 ```bash
-# Build the training tool once
-go build -ldflags="-s -w" -o bin/ib-train.exe ./cmd/ib-train
-
-# Compile 1,000+ domain rows in under 2 seconds (creates format v2 with positional embeddings)
-./bin/ib-train.exe -data data/sample_dataset.csv -out weights/intent.bin -epochs 50 -lr 0.005 -vocab 250
+git clone https://github.com/gluedays-cyber/IntelliBranch-py.git
+cd IntelliBranch-py
+pip install -r requirements.txt
 ```
 
-### Step 3: AI-Powered Branching — Run In-Memory Routing (`go run main.go`)
-Execute zero-config server routing directly. If model weights are not found, `main.go` automatically compiles them from `data/sample_dataset.csv` in under 2 seconds:
+### 2. Zero-Config Run
 
-```go
-package main
+Run the production routing demo out of the box:
 
-import (
-	"context"
-	"fmt"
-	"log"
-	"os"
+```bash
+python main.py
+```
 
-	"intellibranch/pkg/intellibranch"
+```
+=== IntelliBranch Server Routing Started ===
+[ACTION: Refund]   Processing refund for: 'I want to cancel my payment and request a refund'
+[ACTION: Delivery] Querying shipment tracking for: 'When will my delivery package arrive'
+[ACTION: Account]  Initiating account security for: 'Forgot my account password'
+[ACTION: Refund]   Processing refund for: 'Please refund my purchase'
+[ACTION: Delivery] Querying shipment tracking for: 'Track my shipment status'
+[ACTION: Delivery] Querying shipment tracking for: 'Completely random gibberish noise 12345!@#$'
+[FALLBACK: Safety] Isolated low-confidence request: 'got charged twice on my card, refund the extra charge asap'
+=== All queries dispatched in microseconds ===
+```
+
+### 3. Basic Python Usage
+
+```python
+from intellibranch import Router
+
+# Initialize Router with calibrated threshold
+router = Router(model_path="weights/intent.bin", default_threshold=0.60)
+
+# Bind business logic actions
+(
+    router
+    .bind("Refund", lambda ctx, payload: print(f"Processing refund for: {payload}"))
+    .bind("Delivery", lambda ctx, payload: print(f"Querying tracking for: {payload}"))
+    .bind("Account", lambda ctx, payload: print(f"Initiating account security for: {payload}"))
+    .fallback(lambda ctx, payload: print(f"Safety Fallback: {payload}"))
 )
 
-// 1. Business Logic Handlers
-func handleRefund(ctx context.Context, payload any) error {
-	fmt.Printf("[ACTION: Refund]   Processing refund for: '%v'\n", payload)
-	return nil
-}
-
-func handleDelivery(ctx context.Context, payload any) error {
-	fmt.Printf("[ACTION: Delivery] Querying shipment tracking for: '%v'\n", payload)
-	return nil
-}
-
-func handleAccount(ctx context.Context, payload any) error {
-	fmt.Printf("[ACTION: Account]  Initiating account security for: '%v'\n", payload)
-	return nil
-}
-
-func handleFallback(ctx context.Context, payload any) error {
-	fmt.Printf("[FALLBACK: Safety] Isolated low-confidence request: '%v'\n", payload)
-	return nil
-}
-
-func main() {
-	modelPath := "weights/intent.bin"
-
-	// Auto-compile model if missing (ensures instant zero-config clone & run)
-	if _, err := os.Stat(modelPath); os.IsNotExist(err) {
-		log.Println("Model weights not found. Compiling from data/sample_dataset.csv...")
-		samples, err := intellibranch.LoadCSVDataset("data/sample_dataset.csv")
-		if err != nil {
-			log.Fatalf("Failed to load dataset: %v", err)
-		}
-		cfg := intellibranch.DefaultTrainConfig()
-		cfg.Epochs = 50
-		cfg.LearningRate = 0.005
-		cfg.TargetVocabSize = 250
-
-		model, err := intellibranch.TrainModel(samples, cfg)
-		if err != nil {
-			log.Fatalf("Training failed: %v", err)
-		}
-		_ = os.MkdirAll("weights", 0755)
-		if err := intellibranch.SaveBinaryModel(modelPath, model); err != nil {
-			log.Fatalf("Failed to save model: %v", err)
-		}
-		log.Println("Model compilation completed.")
-	}
-
-	// 2. Load compiled binary weights into memory (0.60 calibrated threshold)
-	router, err := intellibranch.NewRouter(modelPath, 0.60)
-	if err != nil {
-		log.Fatalf("Router initialization failed: %v", err)
-	}
-
-	// 3. Bind routes directly inside main.go
-	router.
-		Bind("Refund", handleRefund).
-		Bind("Delivery", handleDelivery).
-		Bind("Account", handleAccount).
-		Fallback(handleFallback)
-
-	// 4. Execute microsecond branch dispatch
-	testQueries := []string{
-		"I want to cancel my payment and request a refund",
-		"When will my delivery package arrive",
-		"Forgot my account password",
-		"Please refund my purchase",
-		"Track my shipment status",
-		"Completely random gibberish noise 12345!@#$",
-	}
-
-	fmt.Println("=== IntelliBranch Server Routing Started ===")
-	ctx := context.Background()
-	for _, query := range testQueries {
-		if err := router.Dispatch(ctx, query, query); err != nil {
-			log.Printf("Dispatch error: %v", err)
-		}
-	}
-	fmt.Println("=== All queries dispatched in microseconds ===")
-}
-```
-
-### Advanced Production Pattern: Multi-Intent Pipeline, 3-Tier Policy & Hot-Reload
-For mission-critical production services requiring 3-tier calibration, composite intent pipelines, and concurrent lock-free model hot-swapping:
-
-```go
-// 1. Configure 3-Tier Policy and Active Learning Telemetry Buffer
-router.SetPolicy(intellibranch.DispatchPolicy{
-	HighThreshold:     0.75,
-	LowThreshold:      0.40,
-	MarginCutoff:      0.15,
-	MaxEntropy:        2.0,
-	PipelineThreshold: 0.30,
-}).EnableTelemetry(1024)
-
-// 2. Bind composite multi-intent and ambiguous handlers
-router.
-	BindPipeline("Refund", "Delivery", func(ctx context.Context, p, s string, payload any) error {
-		fmt.Printf("[PIPELINE: %s -> %s] Processing combined return & shipment: %v\n", p, s, payload)
-		return nil
-	}).
-	Ambiguous(func(ctx context.Context, p, s string, payload any) error {
-		fmt.Printf("[AMBIGUOUS: %s vs %s] Requesting user confirmation: %v\n", p, s, payload)
-		return nil
-	})
-
-// 3. Execute multi-intent pipeline dispatch
-_ = router.DispatchPipeline(ctx, "can u cancel order #49281 and update delivery?", "OrderPayload")
-
-// 4. Lock-free atomic hot-reload on live traffic (0 ns stop-the-world)
-_ = router.Reload("weights/intent.bin")
-
-// 5. Drain active learning drift events
-events := router.DrainTelemetry()
-fmt.Printf("Harvested %d drift events for active learning retraining.\n", len(events))
+# Dispatch queries in microseconds
+router.dispatch(None, "I want my money back", "user_123")
 ```
 
 ---
 
-## Observability & Whitebox Debugging
+## NeuroGate: 3-Head Multi-Intent Filtering
 
-Need to understand why a query routed to a specific branch or why it fell back? Use `Inspect`:
+```python
+from intellibranch import NeuroGate, DispatchPolicy
 
-```go
-trace := router.Inspect("can u cancel order #49281? i bought it by mistake")
-```
+gate = NeuroGate.from_file("weights/demo_cs.bin")
+gate.set_policy(DispatchPolicy(high_threshold=0.70, low_threshold=0.35, pipeline_threshold=0.25))
 
-```json
-{
-  "input_text": "can u cancel order #49281? i bought it by mistake",
-  "token_ids": [4, 5, 8, 12, 45, 98],
-  "subwords": ["can", "u", "cancel", "order", "#", "mistake"],
-  "unknown_token_ratio": 0.0,
-  "class_probabilities": {
-    "Account": 0.0012,
-    "Delivery": 0.0035,
-    "Refund": 0.9953
-  },
-  "predicted_label": "Refund",
-  "secondary_label": "Delivery",
-  "confidence": 0.9953,
-  "margin": 0.9918,
-  "entropy": 0.0351,
-  "threshold": 0.75,
-  "is_ambiguous": false,
-  "is_pipeline": false,
-  "is_fallback": false,
-  "latency_micros": 30
-}
+# Head 2: Symbolic Anchor Boost
+gate.bind("Refund", lambda ctx, payload: print("Handling refund")).with_anchor(1.3, "refund", "money", "card", "return")
+gate.bind("Delivery", lambda ctx, payload: print("Handling delivery")).with_anchor(1.3, "package", "courier", "delivery")
+
+# Multi-Intent Pipeline
+gate.bind_pipeline("Refund", "Delivery", lambda ctx, p, s, payload: print(f"Pipeline: {p} -> {s}"))
+
+# 3-Head Inspection
+trace = gate.inspect("i returned the box please update delivery")
+print(f"Predicted: {trace.predicted_label}, Pipeline: {trace.is_pipeline}, Latency: {trace.latency_micros} μs")
 ```
 
 ---
 
-## NeuroGate: 3-Head Geometric Intelligent Filtering Engine
+## Command Line Tools
 
-`NeuroGate` is an in-memory intelligent filtering gate that wraps a single shared neural backbone encoder with three orthogonal geometric and symbolic guard heads. It solves model overconfidence, Out-of-Domain (OOD) leakage, and slang ambiguity without spawning multiple fragmented networks or incurring heap allocations.
+### 1. Multi-Domain Demonstration Suite
 
-```
-Incoming Request ("it is too dark in here please switch on lamps")
-                               │
-                               ▼
-  ┌────────────────────────────────────────────────────────┐
-  │ Shared Neural Backbone (In-Memory BPE + Positional MLP) │ ──> z ∈ ℝ⁶⁴ (Unit Norm)
-  └────────────────────────────┬───────────────────────────┘
-                               │
- ┌─────────────────────────────┴─────────────────────────────┐
- │ Stack-Allocated 3-Head Geometric Gate (~5 to ~28 μs)      │
- │                                                           │
- │  [Head 1]: L2 Cosine Out-of-Domain (OOD) Guard            │
- │            DotProduct(z, C_domain) < MinCosine ?          │
- │            --> Immediate Fallback Isolation if OOD        │
- │                                                           │
- │  [Head 2]: 1-Cycle Bitwise Symbolic Anchor Soft-Bias      │
- │            if (Bitmask & Anchor_i) != 0                   │
- │            --> Logit_i += Weight * PopCount(Mask)         │
- │                                                           │
- │  [Head 3]: Calibrated Top-2 Margin & Shannon Entropy      │
- │            Stack Softmax over Adjusted Logits             │
- │            --> Definite / Pipeline / Ambiguous / Fallback │
- └─────────────────────────────┬─────────────────────────────┘
-                               │
-         ┌─────────────────────┼─────────────────────┐
-         ▼                     ▼                     ▼
- [Definite Action]     [Multi-Intent Pipeline] [Safe Fallback]
-```
-
-### Key Engineering Capabilities
-
-1. **Strict Zero-Allocation Hot-Path (`0 B/op`, `0 allocs/op`)**:
-   Internal inference operates on fixed stack buffers (`[16]float32` and `[64]float32`). Pre-tokenized inputs dispatched via `FilterTokens` execute in **~28 μs with strictly 0 B/op heap allocation**.
-2. **Single Shared Backbone (No Error Cascading)**:
-   Avoids training multiple fragmented networks. A single compact encoder extracts context, while downstream safety boundaries and semantic boosts are computed geometrically.
-3. **Neuro-Symbolic Anchor Soft-Bias**:
-   Replaces fragile `strings.Contains` hardcoded branching with additive logit bonuses. Subword token IDs map to 64-bit masks (`uint64`), executing anchor boosts in a single CPU cycle (`&` and `popcount`).
-4. **Geometric L2 Cosine OOD Boundary**:
-   Compares normalized query embeddings against the calibrated domain manifold center ($C_{\text{domain}}$) using fast dot products, isolating OOD queries (e.g. quantum physics queries sent to an e-commerce router).
-
-### NeuroGate Production Example
-
-```go
-package main
-
-import (
-	"context"
-	"fmt"
-	"log"
-
-	"intellibranch/pkg/intellibranch"
-)
-
-func main() {
-	// 1. Initialize NeuroGate from binary model
-	gate, err := intellibranch.NewNeuroGate("weights/demo_iot.bin")
-	if err != nil {
-		log.Fatalf("NeuroGate init failed: %v", err)
-	}
-
-	// 2. Calibrate domain manifold centroid from training samples
-	if samples, err := intellibranch.LoadCSVDataset("data/demo_iot.csv"); err == nil {
-		gate.CalibrateDomainCentroid(samples)
-	}
-
-	// 3. Bind route handlers with symbolic anchor soft-biases
-	gate.Bind("LightControl", func(ctx context.Context, payload any) error {
-		fmt.Println(">>> [GPIO 18 HIGH] Toggle Living Room Chandelier")
-		return nil
-	}).WithAnchor(1.8, "dark", "light", "lamps", "lamp", "switch", "lights")
-
-	gate.Bind("ClimateControl", func(ctx context.Context, payload any) error {
-		fmt.Println(">>> [MODBUS UART] Set Daikin HVAC Inverter Temperature")
-		return nil
-	}).WithAnchor(1.8, "cooling", "heat", "fan", "temp", "ac", "air")
-
-	gate.Fallback(func(ctx context.Context, payload any) error {
-		fmt.Println(">>> [FALLBACK] Isolated Out-of-Domain or Ambiguous Request")
-		return nil
-	})
-
-	// 4. Dispatch with microsecond latency and zero allocations
-	ctx := context.Background()
-	_ = gate.Filter(ctx, "it is too dark in here please switch on lamps", nil)
-}
-```
-
----
-
-## The Evolution of Control Flow: Why Retro Branching Fails & How IntelliBranch Proves Its Architectural Superiority
-
-Traditional programming languages force engineers into **discrete control flow** (`if`, `switch`, `hash map`, `regex`). These constructs were invented in the 1960s for deterministic, byte-exact hardware primitives. When applied to real-world strings, natural language, unstructured logs, or conversational commands, **they collapse entirely**.
-
-IntelliBranch transforms control flow from brittle discrete matching into **continuous geometric vector-space routing ($text \to action$) in ~30 μs**.
-
-The included multi-task demonstration driver (`cmd/ib-demo`) directly pits IntelliBranch against traditional programming primitives across 6 critical enterprise domains:
-
-### 1. Structural Comparison: Retro Branching vs. IntelliBranch
-
-| Control Flow Primitive | Why It Breaks Down on Real-World Input | How IntelliBranch Resolves It Permanently |
-| :--- | :--- | :--- |
-| **`switch` / `if (str == val)`** | **100% Failure on Variations**: A 1-character typo (`"refnd"`), colloquial phrasing (`"gimme my cash back"`), or extra whitespace causes silent fall-through. | **BPE Continuous Embedding**: Maps all semantic synonyms and misspelled subwords to contiguous vector coordinates in 64-D space. |
-| **Hash Maps (`map[string]T`)** | **Exact-Key Blindness**: Cannot index semantic equivalence. Caching 10,000 phrasing variations requires 10,000 distinct hash keys, leading to memory bloat and constant cache misses. | **Semantic Coordinate Resolution**: Resolves infinite sentence variations into deterministic Go handlers in ~30 μs with zero external network overhead. |
-| **Regular Expressions (`regex`)** | **Combinatorial Explosion & ReDoS**: Supporting synonyms requires nested lookaheads and permutations ($O(N!)$ rules), causing CPU exhaustion (ReDoS backtracking) and unmaintainable regex hell. | **Non-Linear GELU Tensor Layers**: Evaluates feature cross-products without regex backtracking, maintaining deterministic, capped compute times. |
-| **String Search (`strings.Contains`)** | **Semantic XOR Failure**: Commutative addition collapses opposite meanings. Cannot distinguish `"refund my delivery"` from `"delivery instead of refund"`. Word collisions cause catastrophic misrouting. | **Learned Positional Embeddings**: Encodes token sequence coordinates ($P_{32 \times 64}$) into non-linear activations, mathematically distinguishing token order permutations. |
-| **Binary Boolean Decisions** | **Forced Misclassification**: Discrete `if/else` forces ambiguous or out-of-distribution noise into whichever branch happens to have a loose wildcard match. | **3-Tier Calibrated Pipeline**: Quantifies Shannon Entropy to isolate OOD noise to Fallback, while detecting competitive top-2 margins to trigger Step-up 2FA/Ambiguous logic. |
-
----
-
-### 2. 6-Domain Deep-Dive: Proving Superiority in Action (`ib-demo`)
-
-The automated demonstration driver (`ib-demo`) proves these architectural advantages live across 6 isolated models:
-
-#### Domain 1: E-Commerce CS Gateway (Defeating the Semantic XOR Dilemma)
-- **The Retro Collapse**: `if strings.Contains(msg, "refund") && strings.Contains(msg, "delivery")` collapses opposite business intents. Both `"refund delivery fee"` and `"delivery instead of refund"` trigger the same branch. Regex permutations explode exponentially.
-- **The IntelliBranch Victory**: Learned positional vectors ($P_i$) coupled with non-linear $GELU(E_i + P_i)$ pooling mathematically separate token permutations. Furthermore, `DispatchPipeline` automatically executes composite operations (e.g. Return Approved $\to$ Reshipment Initiated) when both primary and secondary confidences qualify.
-- **Run Live**: `./bin/ib-demo.exe -domain cs`
-
-#### Domain 2: Semantic LLM Gateway (Defeating Hash Map Key Misses & API Waste)
-- **The Retro Collapse**: Caching natural language with `map[string]Handler` achieves a near 0% hit rate because users never type the exact same string twice. Consequently, backends route 100% of routine traffic to OpenAI/Claude, burning $0.02–$0.05 and 1,500ms per request.
-- **The IntelliBranch Victory**: Maps routine banking commands (`QueryBalance`, `TransferFunds`, `CardLock`) directly to in-memory Go handlers in **30 μs at $0.00 cost**. Out-of-Distribution (OOD) queries (e.g. `"explain quantum physics"`) are detected via high Shannon Entropy ($> 1.80$) and safely escalated to cloud LLMs.
-- **Run Live**: `./bin/ib-demo.exe -domain llm`
-
-#### Domain 3: High-Throughput SRE Log Triage (Defeating ReDoS & GC Pauses with 0 B/op)
-- **The Retro Collapse**: Ingesting 100,000+ log lines/sec through complex regex engines burns 100% CPU due to catastrophic backtracking. String allocations trigger GC stop-the-world pauses, choking message brokers (Kafka, Vector).
-- **The IntelliBranch Victory**: Executes stack-allocated zero-heap inference (`PredictSlots`) with **strictly 0 B/op and 0 allocs/op**. Instantly routes critical P0 panics (OOMKilled) to autoscalers while shunting low-priority health probes without heap garbage.
-- **Run Live**: `./bin/ib-demo.exe -domain sre`
-
-#### Domain 4: Offline Edge IoT Control (Defeating Brittle Keyword Matching in <180KB RAM)
-- **The Retro Collapse**: Hard-coded `switch(cmd)` fails when users speak naturally: `"it's freezing in here"` fails to trigger `"turn on heater"`. Running local 7B models requires 4GB+ RAM, impossible on 64MB embedded Linux boards.
-- **The IntelliBranch Victory**: Compiles into a single Little-Endian binary under 180 KB with zero external dependencies and zero CGO. Maps colloquial voice/text variants directly to hardware GPIO/UART actuators in single-digit microseconds.
-- **Run Live**: `./bin/ib-demo.exe -domain iot`
-
-#### Domain 5: Automated CI/CD Failure Triage (Defeating Fragile String Scrapers)
-- **The Retro Collapse**: Compiler error messages change formatting across toolchains (Docker, Go, Gradle, Kubernetes). Hard-coded string pattern matching silently breaks, forcing DevOps engineers to manually triage build failures.
-- **The IntelliBranch Victory**: Ingests unstructured build error tails and generalizes statistical subwords to trigger deterministic self-healing actions: `AutoRetry` (transient network 504), `ScaleUp` (OOM kill status 137), or `NotifyAuthor` (code syntax error).
-- **Run Live**: `./bin/ib-demo.exe -domain cicd`
-
-#### Domain 6: FinTech Transaction Memo Audit (Defeating Naive Blacklists with 3-Tier Safety)
-- **The Retro Collapse**: Keyword blacklists (`strings.Contains("scam")`) are trivially bypassed by fraudsters using typo obfuscation (`"p0lice f1ne"`). Rigid binary `if/else` either blocks legitimate transactions or lets fraud slip through.
-- **The IntelliBranch Victory**: Evaluates semantic risk. When the margin between normal transfer and scam suspicion is borderline (`isAmbiguous`), it intercepts execution to trigger Step-Up 2FA (SMS OTP challenge), providing a dynamic middle-ground impossible in standard boolean control flow.
-- **Run Live**: `./bin/ib-demo.exe -domain fintech`
-
----
-
-### 3. Zero-Download On-The-Fly Demonstration Driver
-
-Because IntelliBranch manufactures its own neural models directly from dataset CSVs, **you do NOT need to download pre-trained weights from HuggingFace, Git LFS, or external buckets**. 
-
-When `ib-demo` is executed, its built-in auto-training bootstrap reads `data/demo_*.csv` and compiles all 6 Little-Endian binary models in memory in under 2 seconds:
+Test the 6 real-world domain gateways:
 
 ```bash
-# Option 1: Instant direct run (auto-trains missing models and executes showcase)
-go run ./cmd/ib-demo
+# Run all 6 domains
+python -m intellibranch.cli.demo --domain all
 
-# Option 2: Compile static standalone binary
-go build -ldflags="-s -w" -o bin/ib-demo.exe ./cmd/ib-demo
-
-# Run all 6 domains sequentially in automated showcase mode
-./bin/ib-demo.exe -domain all
-
-# Or inspect an isolated domain to verify architectural superiority
-./bin/ib-demo.exe -domain cs       # Proves Semantic XOR order disambiguation
-./bin/ib-demo.exe -domain llm      # Proves Local $0.00 bypass vs Cloud LLM escape
-./bin/ib-demo.exe -domain sre      # Proves 0 B/op stack allocation on logs
-./bin/ib-demo.exe -domain iot      # Proves Sub-180KB offline colloquial control
-./bin/ib-demo.exe -domain cicd     # Proves Automated build failure self-healing
-./bin/ib-demo.exe -domain fintech  # Proves Borderline Step-Up 2FA Challenge
+# Or run a specific domain: cs, llm, sre, iot, cicd, fintech
+python -m intellibranch.cli.demo --domain cs
 ```
 
----
+### 2. Offline Model Training
 
-## Core Routing API Reference
-
-| Method / Struct | Signature | Operational Role |
-| :--- | :--- | :--- |
-| **`NewRouter`** | `NewRouter(path string, threshold float64) (*Router, error)` | Loads v2 binary weights, initializes atomic model pointer, and builds 3-tier router. |
-| **`SetPolicy`** | `.SetPolicy(policy DispatchPolicy) *Router` | Configures high/low thresholds, top-1/top-2 margin cutoff, OOD max entropy, and pipeline boundaries. |
-| **`Bind`** | `.Bind(label string, handler RouteAction) *Router` | Associates a trained class with a Go handler: `func(ctx context.Context, payload any) error`. |
-| **`BindPipeline`** | `.BindPipeline(p, s string, handler PipelineAction) *Router` | Registers composite handler triggered when primary and secondary intents are both eligible. |
-| **`Ambiguous`** | `.Ambiguous(handler AmbiguousAction) *Router` | Intercepts borderline confidence or narrow margin queries to prompt user confirmation. |
-| **`Fallback`** | `.Fallback(handler RouteAction) *Router` | Designates safety handler for low confidence, high unknown token ratio, or OOD entropy. |
-| **`Dispatch`** | `.Dispatch(ctx context.Context, text string, payload any) error` | Evaluates 3-tier routing and executes bound branch in ~30 μs. |
-| **`DispatchPipeline`**| `.DispatchPipeline(ctx context.Context, text string, payload any) error` | Executes multi-intent pipeline handlers if eligible, falling back to 3-tier routing. |
-| **`Reload`** | `.Reload(path string) error` | Atomically swaps weights on live traffic without locks (`0 ns` stop-the-world). |
-| **`EnableTelemetry`**| `.EnableTelemetry(capacity int) *Router` | Allocates thread-safe ring buffer capturing ambiguous, OOD, and pipeline requests. |
-| **`DrainTelemetry`** | `.DrainTelemetry() []TelemetryEvent` | Extracts collected drift events in FIFO order for active learning retraining. |
-| **`PredictSlots`** | `model.PredictSlots(text string, out *StaticInferenceResult) error` | Stack-allocated inference primitive achieving strictly **`0 B/op, 0 allocs/op`**. |
-
----
-
-## Project Structure
-
-```text
-intellibranch/
-├── bin/
-│   ├── ib-train.exe       # Compiled offline training tool
-│   └── ib-demo.exe        # Compiled 6-domain NeuroGate demonstration driver
-├── cmd/
-│   ├── ib-train/          # Offline BPE + AdamW training CLI source
-│   └── ib-demo/           # 6-Domain NeuroGate demonstration driver source
-├── docs/
-│   └── MANUAL.md          # Comprehensive manual, keyword guide & tutorial
-├── pkg/
-│   └── intellibranch/     # Pure-Go zero-dependency core engine
-│       ├── binary.go      # Format v1 & v2 Little-Endian parser and serializer
-│       ├── ops.go         # SafeClamp, GELU, Softmax, MatMul, and Non-Linear Pooling
-│       ├── runtime.go     # Zero-alloc PredictSlots, Shannon Entropy & In-memory model
-│       ├── telemetry.go   # Thread-safe ring buffer for active learning feedback
-│       ├── tokenizer.go   # Pure Go BPE subword tokenizer
-│       ├── trainer.go     # AdamW backprop trainer with positional embedding learning
-│       ├── router.go      # 3-Tier router, atomic reload, and pipeline dispatch
-│       └── neurogate.go   # 3-Head geometric filter, cosine manifold & symbolic anchors
-├── weights/
-│   ├── .gitkeep           # Directory placeholder (models compiled on-the-fly, git-ignored)
-│   └── (demo_*.bin)       # Auto-generated domain binary weights upon first demo run
-├── data/
-│   ├── sample_dataset.csv # 1,000+ domain training rows
-│   ├── demo_cs.csv        # 1,000 CS gateway intent samples (4 classes)
-│   ├── demo_llm.csv       # 1,000 banking LLM bypass samples (4 classes)
-│   ├── demo_sre.csv       # 1,000 high-throughput SRE log samples (4 classes)
-│   ├── demo_iot.csv       # 1,000 offline edge IoT voice samples (4 classes)
-│   ├── demo_cicd.csv      # 1,000 CI/CD build error remediation samples (4 classes)
-│   └── demo_fintech.csv   # 1,000 transaction memo fraud audit samples (4 classes)
-├── main.go                # Server entrypoint with auto-train bootstrap
-├── go.mod                 # Go module definition
-└── README.md              # Project documentation
-```
-
----
-
-## 6-Domain Demonstration Driver (`ib-demo`)
-
-Run the 46-scenario multi-domain validation suite with automatic on-the-fly training:
+Train a new binary classifier from any two-column CSV (`text,label`):
 
 ```bash
-# Run all 6 domains (46 scenarios) in automated showcase mode
-go run ./cmd/ib-demo -domain all
-
-# Or run via compiled standalone binary
-./bin/ib-demo.exe -domain all
-
-# Run individual enterprise domains
-./bin/ib-demo.exe -domain cs       # 1. E-Commerce CS Gateway (XOR & Multi-Intent)
-./bin/ib-demo.exe -domain llm      # 2. Semantic LLM Gateway & Cloud Bypass ($0.00 vs $0.02)
-./bin/ib-demo.exe -domain sre      # 3. High-Throughput SRE Log Triage (0 B/op)
-./bin/ib-demo.exe -domain iot      # 4. Offline Edge IoT Command Dispatcher
-./bin/ib-demo.exe -domain cicd     # 5. Automated CI/CD Failure Triage & Self-Healing
-./bin/ib-demo.exe -domain fintech  # 6. FinTech Transaction Memo Audit & Fraud Prevention
+python -m intellibranch.cli.train --data data/sample_dataset.csv --out weights/custom.bin --epochs 100 --vocab 200
 ```
 
 ---
 
-## Epilogue: An Architectural Manifesto on the Evolution of Control Flow
+## Running Tests
 
-> *"In the beginning, there was `JMP`. Then came `if`. And for fifty years, computer science fell asleep."*  
-> — Thoughts on Software Evolution from **gluedays@gmail.com**
+Run the full pytest suite (25 test cases covering ops, binary IBRN v2 serialization, tokenizer, runtime, neurogate, router, and trainer):
 
-In 1945, the Von Neumann architecture laid the physical foundation of modern computing with a crude primitive: the conditional jump (`JMP` / `goto`). The machine simply altered its instruction pointer based on zero-flags in silicon registers.
-
-In 1968, Edsger W. Dijkstra published his seminal paper, *"Go To Statement Considered Harmful"*. That intellectual revolution forced programming languages to evolve: unruly jumps were disciplined into structured, deterministic control flow—giving birth to the ubiquitous `if`, `else`, and `switch`. For a world governed by punch cards, clean integers, and rigid ASCII strings, discrete equality matching was a masterpiece.
-
-**However, that was half a century ago.**
-
-Today, the digital landscape has undergone an irreversible phase transition. Humanity no longer feeds software with pristine 4-byte integers and sanitized alphanumeric enums. Modern systems are inundated with an ocean of **polymorphic, unstructured, noisy, colloquial, and contextual human reality**:
-- Typo-ridden mobile messages, dialect slang, and conversational phrasing.
-- Asynchronous high-throughput log streams with mutating compiler stack traces.
-- Multi-dimensional contextual intents where word order inverts business logic (`"refund delivery"` vs `"delivery refund"`).
-
-Yet, look at modern programming languages—whether Go, Rust, C++, Java, or Python. **Their fundamental control flow primitive has not evolved a single millimeter since the 1970s.**
-
-Engineers are still desperately stringing together brittle `if` statements, bloating codebases with thousands of fragile regexes, and watching servers collapse under ReDoS backtracks and CPU saturation. When regex fails, the industry swings to the opposite extreme of absurdity: burning millions of dollars routing simple string branches to 400-billion-parameter cloud LLMs, waiting 2,000 milliseconds and paying $0.03 just to pick an execution branch.
-
-**This is architectural stagnation. Retro conditional branching must evolve.**
-
-Control flow must transcend discrete, byte-exact binary matching. It must evolve into **continuous geometric vector-space routing**:
-1. Branching should not break because of a single misplaced character or slang synonym.
-2. Control flow must natively understand semantic context, token permutation, and feature interactions in single-digit microseconds.
-3. Decision boundaries must be probabilistic and multi-tiered—safely executing confident branches, gracefully prompting when ambiguous, and deterministically isolating out-of-distribution noise without panic.
-
-**IntelliBranch is not just a tool; it is a working manifesto.** It proves that a self-contained, domain-trained neural routing engine running in pure Go can replace brittle retro branching at **~30 microseconds with strictly 0 B/op heap allocation**.
-
-The future of programming languages lies in elevating the compiler and runtime to understand continuous semantic topology. The era of blind discrete branching is over.
+```bash
+pytest
+```
 
 ---
 
 ## License
 
-This project is licensed under the MIT License.
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
